@@ -1,7 +1,7 @@
 " VIM Configuration for Brian Clements
-" Version: 1.0.0
-" Date: 2013.11.19-00:23 
-" Last Change: Lots of cleanup, filled out git shortcuts, prepped for github
+" Version: 1.0.1
+" Date: 2013.11.19-01:29
+" Last Change: keymapings
 " ------------------
 
 " ------------------
@@ -251,6 +251,7 @@
         let mapleader=";"
     " Quick edit and reload of .vimrc
         nnoremap <silent> <leader>ev :e $MYVIMRC<CR>
+        nnoremap <silent> <leader>evg :e $HOME/.vim/README.md<CR>
         nnoremap <silent> <leader>sv :w<CR><bar>:so $MYVIMRC<CR>
         nnoremap <silent> <leader>eg :e ~/.gitconfig<CR>
     " Basic functions made easier
@@ -563,8 +564,8 @@
         nnoremap <leader>gI :!git init<CR>
         nnoremap <Leader>gi :!git init<CR> :!git add .<CR> :!git commit -S -m
             \ "Initial commit"<CR> :e %<CR>
-        nnoremap <Leader>gg :w<CR>:Gcommit -S<CR>
-        nnoremap <Leader>gw :Gwrite<CR>
+        nnoremap <Leader>gc :w<CR>:Gcommit -S<CR>
+        nnoremap <Leader>gg :Gwrite<CR>
         nnoremap <Leader>gt :Git tag -s v
         nnoremap <Leader>gd :Gdiff<CR>
         nnoremap <leader>gs :Git stash<CR>
@@ -588,7 +589,8 @@
         " Remotes
         nnoremap <leader>gr :Git remote<space>
         nnoremap <leader>gru :Git pull<space>
-        nnoremap <leader>grp :Git push -u --tags<space>
+        nnoremap <leader>grP :Git push -u --tags<space>
+        nnoremap <leader>grp :Git push --tags<space>
         " Merges
         nnoremap <leader>gm :Git merge<space>
         " Other
