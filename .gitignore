@@ -1,9 +1,0 @@
-tmp/*
-!tmp/backup
-tmp/backup/*
-!tmp/swap
-tmp/swap/*
-!tmp/undo
-tmp/undo/*
-!tmp/view
-tmp/view/*
