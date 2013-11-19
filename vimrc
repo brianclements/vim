@@ -591,7 +591,7 @@
         nnoremap <leader>gr :Git remote<space>
         nnoremap <leader>gru :Git pull<space>
         nnoremap <leader>grP :Git push -u --tags<space>
-        nnoremap <leader>grp :Git push --tags<space>
+        nnoremap <leader>grp :Git push<CR>
         " Merges
         nnoremap <leader>gm :Git merge<space>
         " Other
