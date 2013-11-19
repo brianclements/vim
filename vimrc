@@ -252,7 +252,8 @@
     " Quick edit and reload of .vimrc
         nnoremap <silent> <leader>ev :e $MYVIMRC<CR>
         nnoremap <silent> <leader>evg :e $HOME/.vim/README.md<CR>
-        nnoremap <silent> <leader>sv :w<CR><bar>:so $MYVIMRC<CR>
+        nnoremap <silent> <leader>sv :so $MYVIMRC<CR>
+        nnoremap <silent> <leader>wsv :w<CR><bar>:so $MYVIMRC<CR>
         nnoremap <silent> <leader>eg :e ~/.gitconfig<CR>
     " Basic functions made easier
         nnoremap <silent> <leader>x :x<CR>
