@@ -1,0 +1,75 @@
+[submodule "gmarik/vundle"]
+    path = bundle/vundle
+    url = https://github.com/gmarik/vundle.git
+[submodule "scrooloose/nerdcommenter"]
+    path = bundle/nerdcommenter
+    url = https://github.com/scrooloose/nerdcommenter.git
+[submodule "scrooloose/nerdtree"]
+    path = bundle/nerdtree
+    url = https://github.com/scrooloose/nerdtree.git
+[submodule "Lokaltog/powerline"]
+    path = bundle/powerline
+    url = https://github.com/Lokaltog/powerline.git
+[submodule "tpope/vim-fugitive"]
+    path = bundle/vim-fugitive
+    url = https://github.com/tpope/vim-fugitive.git
+[submodule "klen/python-mode"]
+    path = bundle/python-mode
+    url = https://github.com/klen/python-mode.git
+[submodule "vimoutliner/vimoutliner"]
+    path = bundle/vimoutliner
+    url = https://github.com/vimoutliner/vimoutliner.git
+[submodule "vim-scripts/Tagbar"]
+    path = bundle/Tagbar
+    url = https://github.com/vim-scripts/Tagbar.git
+[submodule "wincent/Command-T"]
+    path = bundle/Command-T
+    url = https://github.com/wincent/Command-T.git
+[submodule "wincent/Command-T/vendor/vimball"]
+    path = bundle/Command-T/vendor/vimball
+    url = https://github.com/tomtom/vimball.rb.git
+[submodule "wincent/Command-T/vendor/vimscriptuploader"]
+    path = bundle/Command-T/vendor/vimscriptuploader
+    url = https://github.com/tomtom/vimscriptuploader.rb.git
+[submodule "Lokaltog/powerline-fonts"]
+    path = bundle/powerline-fonts
+    url = https://github.com/Lokaltog/powerline-fonts.git
+[submodule "chrisbra/csv.vim"]
+    path = bundle/csv.vim
+    url = https://github.com/chrisbra/csv.vim.git
+[submodule "mattboehm/vim-accordion"]
+    path = bundle/vim-accordion
+    url = https://github.com/mattboehm/vim-accordion.git
+[submodule "ervandew/supertab"]
+    path = bundle/supertab
+    url = https://github.com/ervandew/supertab.git
+[submodule "plasticboy/vim-markdown"]
+    path = bundle/vim-markdown
+    url = https://github.com/plasticboy/vim-markdown.git
+[submodule "waylan/vim-markdown-extra-preview"]
+    path = bundle/vim-markdown-extra-preview
+    url = https://github.com/waylan/vim-markdown-extra-preview.git
+[submodule "airblade/vim-rooter"]
+    path = bundle/vim-rooter
+    url = https://github.com/airblade/vim-rooter.git
+[submodule "bling/vim-bufferline"]
+    path = bundle/vim-bufferline
+    url = https://github.com/bling/vim-bufferline.git
+[submodule "vim-scripts/ScrollColors"]
+    path = bundle/ScrollColors
+    url = https://github.com/vim-scripts/ScrollColors.git
+[submodule "brianclements/vim-popwindow"]
+    path = bundle/vim-popwindow
+    url = https://github.com/brianclements/vim-popwindow.git
+[submodule "tomasr/molokai"]
+    path = bundle/molokai
+    url = https://github.com/tomasr/molokai.git
+[submodule "ap/vim-css-color"]
+    path = bundle/vim-css-color
+    url = https://github.com/ap/vim-css-color.git
+[submodule "tpope/vim-surround"]
+    path = bundle/vim-surround
+    url = https://github.com/tpope/vim-surround.git
+[submodule "tpope/vim-repeat"]
+    path = bundle/vim-repeat
+    url = https://github.com/tpope/vim-repeat.git
