@@ -1,7 +1,7 @@
 " VIM Configuration for Brian Clements
-" Version: 1.0.1
-" Date: 2013.11.19-01:29
-" Last Change: keymapings
+" Version: 1.0.2
+" Date: 2013.11.21-04:08 
+" Last Change: buffer closure, pwd, MakeSmallWindow(), git, Shell()
 " ------------------
 
 " ------------------
@@ -75,9 +75,9 @@
         set backspace=indent,eol,start
     " Temporary files
         set backup      " keep a backup file
-        set undofile    " remember undo commands
+        " set undofile    " remember undo commands
         set backupdir=$HOME/.vim/tmp/backup
-        set undodir=$HOME/.vim/tmp/undo
+        " set undodir=$HOME/.vim/tmp/undo
         set directory=$HOME/.vim/tmp/swap//
         set viewdir=$HOME/.vim/tmp/view
     " Color Support
@@ -252,8 +252,9 @@
     " Quick edit and reload of .vimrc
         nnoremap <silent> <leader>ev :e $MYVIMRC<CR>
         nnoremap <silent> <leader>evg :e $HOME/.vim/README.md<CR>
-        nnoremap <silent> <leader>sv :so $MYVIMRC<CR>
-        nnoremap <silent> <leader>wsv :w<CR><bar>:so $MYVIMRC<CR>
+        nnoremap <silent> <leader>Sv :so $MYVIMRC<CR>
+        nnoremap <silent> <leader>Sf :so %<CR>:echo 'loaded file: ' . @%<CR>
+        nnoremap <silent> <leader>wSv :w<CR><bar>:so $MYVIMRC<CR>
         nnoremap <silent> <leader>eg :e ~/.gitconfig<CR>
     " Basic functions made easier
         nnoremap <silent> <leader>x :x<CR>
@@ -287,9 +288,9 @@
         vnoremap <silent> <leader>sy "+y
         nnoremap <silent> <leader>sp "+p
         nnoremap <silent> <leader>sP "+P
-    " Date insert
+    " Timestamp
         :nnoremap <F4> "=strftime(" %Y.%m.%d-%R")<CR>P
-        :inoremap <F4> <C-R>=strftime(" %Y.%m.%d-%R")<CR>
+        :inoremap <F4> <C-R>=strftime("%Y.%m.%d-%R")<CR>
     " Cursor Nagivation
         " Enable insert mode navigation to mimic Xterm functions
             inoremap <C-j> <Down>
@@ -341,8 +342,8 @@
     " Disable auto-formatting for pasting large chucks of text
         set pastetoggle=<F2>
     " Folding
-        nnoremap <silent><Space> zA
-        nnoremap <silent><S-Space> za
+        nnoremap <silent><Space> za
+        nnoremap <silent><S-Space> zA
         " old code 
             " nnoremap <silent><space> @=(foldlevel('.')?'za':'l')"<CR>
         nnoremap <silent><leader><S-Space> :ToggleBigFold<CR>
@@ -377,18 +378,23 @@
         nnoremap <silent> <leader>D :diffoff<CR>
     " Buffer Navigation
         nnoremap <leader>bl :buffers<CR>:buffer<Space>
+        nnoremap <leader>bg <C-^>
         nnoremap <silent> <leader>bn :bnext<CR>
         nnoremap <silent> <a-=> :bnext<CR>
         nnoremap <silent> <leader>bp :bprev<CR>
         nnoremap <silent> <a--> :bprev<CR>
-        nnoremap <silent> <leader>bq :bnext<CR>:bd #<CR>
+        nnoremap <silent> <leader>bd :bnext<CR>:bd #<CR>
+        nnoremap <silent> <leader>bq :bd<CR>
         nnoremap <silent> <leader>bQ :bd!<CR>
     " System commands
+        nnoremap <leader>s? :pwd<CR>
         " Clear various caches,registers, and backup files
             nnoremap <leader>sCv :!rm ~/.vim/tmp/view/*<CR>
             nnoremap <leader>sCb :!rm ~/.vim/tmp/backup/*<CR>
             nnoremap <leader>sCs :!rm ~/.vim/tmp/swap/*<CR>
+            nnoremap <leader>sCu :!rm ~/.vim/tmp/undo/*<CR>
             nnoremap <leader>sCr :ClearRegisters<CR>
+            nnoremap <silent><leader>scd :cd %:p:h<CR>:pwd<CR>
         " Manually Set filetype for arbitrary buffers
             nnoremap <silent><leader>sfn :setlocal filetype=<CR>
             nnoremap <silent><leader>sfp :setlocal filetype=python<CR>
@@ -401,7 +407,7 @@
                 " Note, this visual mode version will show up with a range as an arg
                 vnoremap <leader>sr :Shell<CR>
             " Launch Terminator
-                nnoremap <leader>st :!terminator &<CR>
+                nnoremap <leader>st :!terminator -f &<CR>
             " Starts up bash in vim (careful: only for simple things)
                 nnoremap <leader>sS :!bash<CR>
     " Better Spelling and composition support
@@ -433,6 +439,7 @@
     " Bash
         " Read output of bash command to new window in vim
         function! s:ExecuteInShell(command) range
+            let curwin = winnr()
             let lines = []
             if (!len(a:command))
                 let lines=getline(a:firstline, a:lastline)
@@ -450,10 +457,11 @@
             else
                 silent! execute 'silent %!'. command
             endif
-            silent! execute 'resize 15$')
+            silent! execute 'MakeSmallWindow'
             silent! redraw
             silent! execute 'au BufUnload <buffer> execute bufwinnr(' . bufnr('#') . ') . ''wincmd w'''
             silent! execute 'nnoremap <silent> <buffer> <LocalLeader>srR :call <SID>ExecuteInShell(''' . command . ''')<CR>'
+            silent! execute curwin . 'wincmd w'
             echo 'Shell command ' . command . ' executed.'
         endfunction
         command! -range -complete=shellcmd -nargs=* Shell <line1>,<line2>call s:ExecuteInShell(<q-args>)
@@ -529,9 +537,14 @@
     " code mode?
         " two separate modes? toggle in one?
     " Make small window
-    " TODO: set max size limit using old code
         function! MakeSmallWindow()
-            exec "resize " . (line('$') + 1)
+            let curwinsize = line('$')
+            let maxsize = 15
+            if curwinsize > maxsize
+                exe "resize " . maxsize
+            else
+                exe "resize " . (line('$') + 1)
+            endif
         endfunction
         command! MakeSmallWindow call MakeSmallWindow()
 
@@ -560,35 +573,38 @@
             let use_space_colon=1
         " au BufWinLeave *.otl mkview
         " au BufWinEnter *.otl silent loadview
-    " fugitive
+    " fugitive and git commands
         " Normal rotation
+        nnoremap <leader>g :Git<space>
         nnoremap <leader>gI :!git init<CR>
         nnoremap <Leader>gi :!git init<CR> :!git add .<CR> :!git commit -S -m
             \ "Initial commit"<CR> :e %<CR>
-        nnoremap <Leader>gc :w<CR>:Gcommit -S<CR>
+        nnoremap <Leader>gwc :w<CR>:Gcommit -S<CR>
+        nnoremap <Leader>gc :Gcommit -S<CR>
         nnoremap <Leader>gg :Gwrite<CR>
         nnoremap <Leader>gt :Git tag -s v
         nnoremap <Leader>gd :Gdiff<CR>
         nnoremap <leader>gs :Git stash<CR>
         nnoremap <leader>gsp :Git stash pop<CR>
         " Structure Editing
-        nnoremap <Leader>gM :Gmove<space>
-        nnoremap <Leader>gR :Gremove<CR>
-        nnoremap <Leader>gr :Gread<CR>
+        nnoremap <Leader>gfm :Gmove<space>
+        nnoremap <Leader>gfd :Gremove<CR>
+        nnoremap <Leader>gfr :Gread<CR>
         " Branching
-        nnoremap <silent><leader>gb :Shell git branch -a<CR>:MakeSmallWindow<CR>
+        nnoremap <leader>gb? :Shell git branch -a<CR>
         nnoremap <leader>gbb :Git checkout<space>
-        nnoremap <leader>gbf :Git checkout -b<space>
-        nnoremap <leader>gbD :Git branch -d<space>
+        nnoremap <leader>gbf :!git checkout -b<space>
+        nnoremap <leader>gbD :!git checkout master<CR>:!git branch -d<space>
         " Viewing status
         nnoremap <Leader>g? :Gstatus<CR>
-        nnoremap <Leader>gtt :Shell git tags<CR>:MakeSmallWindow<CR>
+        nnoremap <Leader>gt? :Shell git tags<CR>
         " Logs
         nnoremap <Leader>glb :Gblame<CR>
-        nnoremap <Leader>gll :!terminator -f -u -x git hist &<CR>
-        nnoremap <Leader>glt :!terminator -f -u -x git tree &<CR>
+        nnoremap <Leader>gll :!terminator -f --command="git hist" &<CR>
+        nnoremap <Leader>glt :!terminator -f --command="git tree" &<CR>
         " Remotes
-        nnoremap <leader>gr :Git remote<space>
+        nnoremap <leader>gr :Shell git remote<space>
+        nnoremap <leader>gra :Git remote add github https://github.com/brianclements/
         nnoremap <leader>gru :Git pull<space>
         nnoremap <leader>grP :Git push -u --tags<space>
         nnoremap <leader>grp :Git push<CR>
@@ -692,13 +708,14 @@
     " Supertab
         let g:SuperTabDefaultCompletionType = "context"
     " vim-rooter
-        let g:rooter_manual_only = 1
+        let g:rooter_manual_only = 0
         let g:rooter_use_lcd = 1
         let g:rooter_change_directory_for_non_project_files = 1
         let g:rooter_patterns = ['README.md', 'LICENSE', 'VERSION', 'doc/', 
             \ 'docs/', 'AUTHORS.MD', 'Rakefile', 'python', '.git/',
             \ '.gitignore', ]
-        nnoremap <silent> <leader>scd <Plug>RooterChangeToRootDirectory
+        " not working
+        " nnoremap <silent> <leader>scd <Plug>RooterChangeToRootDirectory
 
 " ------------------
 " Filetype Specific Options
