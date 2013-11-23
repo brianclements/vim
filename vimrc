@@ -1,7 +1,7 @@
 " VIM Configuration for Brian Clements
-" Version: 1.0.2
-" Date: 2013.11.21-04:08 
-" Last Change: buffer closure, pwd, MakeSmallWindow(), git, Shell()
+" Version: 1.0.3
+" Date: 2013.11.22-23:04 
+" Last Change: minor keybinding changes
 " ------------------
 
 " ------------------
@@ -607,7 +607,7 @@
         nnoremap <leader>gra :Git remote add github https://github.com/brianclements/
         nnoremap <leader>gru :Git pull<space>
         nnoremap <leader>grP :Git push -u --tags<space>
-        nnoremap <leader>grp :Git push<CR>
+        nnoremap <leader>grp :Git push<space>
         " Merges
         nnoremap <leader>gm :Git merge<space>
         " Other
