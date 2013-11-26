@@ -1,7 +1,10 @@
 " VIM Configuration for Brian Clements
-" Version: 1.0.3
-" Date: 2013.11.22-23:04 
-" Last Change: minor keybinding changes
+" Version:      1.0.4
+" Date:         
+" Changes:  - removed unnesesary BufEnter's, they kept on reapplying 
+"             fold levels
+"           - changed python rope doc keybind
+"           - fugitive/git keybinds
 " ------------------
 
 " ------------------
@@ -324,13 +327,10 @@
         " Easy window navigation
             nnoremap <C-w>n <C-w>w
             nnoremap <C-w>p <C-w>W
-            nnoremap <C-w>j <C-w><Down>
+            nnoremap <C-w><CR> :JumpWindow<CR>
             nnoremap <C-j> <C-w><Down>
-            nnoremap <C-w>k <C-w><Up>
             nnoremap <C-k> <C-w><Up>
-            nnoremap <C-w>h <C-w><Left>
             nnoremap <C-h> <C-w><Left>
-            nnoremap <C-w>l <C-w><Right>
             nnoremap <C-l> <C-w><Right>
         " Scroll binding
             nnoremap <C-w>b :set scrollbind<CR>
@@ -410,6 +410,8 @@
                 nnoremap <leader>st :!terminator -f &<CR>
             " Starts up bash in vim (careful: only for simple things)
                 nnoremap <leader>sS :!bash<CR>
+        " Messages
+            nnoremap <leader>sm :mess<CR>
     " Better Spelling and composition support
         nnoremap \s 1z=
         nnoremap \S a<C-x><C-s>
@@ -425,7 +427,7 @@
         " Unit testing
             nnoremap <leader>pti :!pythoscope --init<CR>
             nnoremap <leader>ptm :!pythoscope %:p:.
-            nnoremap <leader>ptr :Shell python -m unittest discover -v %:p:h:h<CR>
+            nnoremap <leader>ptr :Shell python setup.py test<CR>
         " Run selection
             vnoremap <leader>pr :w !python<CR>
         " Run current file
@@ -467,11 +469,11 @@
         command! -range -complete=shellcmd -nargs=* Shell <line1>,<line2>call s:ExecuteInShell(<q-args>)
     " Easy Global Folding
         function! ToggleBigFold()
-            if !exists("b:folded")
+            if !exists ("b:folded")
                 exec "normal! zR"
                 let b:folded = 0
             else
-                if( b:folded == 0 )
+                if ( b:folded == 0 )
                     exec "normal! zM"
                     let b:folded = 1
                 else
@@ -547,7 +549,24 @@
             endif
         endfunction
         command! MakeSmallWindow call MakeSmallWindow()
-
+    " Jump between current/newest window
+        function! JumpWindow()
+            let curwin = winnr()
+            let last_win = winnr('$')
+            if !exists ("t:winstart")
+                exec last_win . 'wincmd w'
+                let t:winstart = curwin
+            else
+                if ( t:winstart == curwin )
+                    let t:winstart = curwin
+                    exec last_win . 'wincmd w'
+                else
+                    exec t:winstart . 'wincmd w'
+                    unlet t:winstart
+                endif
+            endif
+        endfunction
+        command! JumpWindow call JumpWindow()
 " ------------------
 " Plugin Options
 " ------------------
@@ -593,7 +612,7 @@
         " Branching
         nnoremap <leader>gb? :Shell git branch -a<CR>
         nnoremap <leader>gbb :Git checkout<space>
-        nnoremap <leader>gbf :!git checkout -b<space>
+        nnoremap <leader>gbf :Git checkout -b<space>
         nnoremap <leader>gbD :!git checkout master<CR>:!git branch -d<space>
         " Viewing status
         nnoremap <Leader>g? :Gstatus<CR>
@@ -603,13 +622,15 @@
         nnoremap <Leader>gll :!terminator -f --command="git hist" &<CR>
         nnoremap <Leader>glt :!terminator -f --command="git tree" &<CR>
         " Remotes
+        nnoremap <leader>gr? :Shell git remote -v<CR>
         nnoremap <leader>gr :Shell git remote<space>
         nnoremap <leader>gra :Git remote add github https://github.com/brianclements/
+        nnoremap <leader>grc :Git remote prune<space>
         nnoremap <leader>gru :Git pull<space>
         nnoremap <leader>grP :Git push -u --tags<space>
         nnoremap <leader>grp :Git push<space>
         " Merges
-        nnoremap <leader>gm :Git merge<space>
+        nnoremap <leader>gm :!git checkout master<CR>:Git merge<space>
         " Other
         nnoremap <Leader>gwq :Gwq<CR>
         nnoremap <leader>gV :!gitg<CR>
@@ -649,7 +670,7 @@
             let g:pymode_run_key = '<leader>pR'
         " Documentation
             let g:pymode_doc = 1
-            let g:pymode_doc_key = 'pD'
+            let g:pymode_doc_key = 'pd'
         "Linting
             let g:pymode_lint = 1
             let g:pymode_lint_checker = "pyflakes,pep8"
@@ -724,7 +745,7 @@
         autocmd BufEnter *.*
             \ exec 'Rooter'
     " Markdown (default for all text files)
-        autocmd BufEnter,BufRead,BufNewFile *.txt,*.text,*.md,*.markdown
+        autocmd BufRead,BufNewFile *.txt,*.text,*.md,*.markdown
             \ setlocal spell |
             \ setlocal textwidth=80 |
             \ setlocal filetype=markdown |
@@ -736,14 +757,14 @@
         autocmd Filetype vimrc
             \ setlocal nospell
     " Vim Outliner
-        autocmd BufEnter,BufNewFile *.otl
+        autocmd BufRead,BufNewFile *.otl
             \ setlocal nonumber |
             \ setlocal textwidth=80 |
             \ setlocal spell |
             \ inoremap <S-CR> <CR><C-t> |
             \ inoremap <C-S-CR> <CR><C-d><BS>
     " Lilypond Files
-        autocmd BufEnter,BufNewFile *.ly
+        autocmd BufRead,BufNewFile *.ly
             \ setfiletype lilypond |
             \ setlocal noai nocin nosi inde= |
             \ setlocal autoindent |
@@ -759,7 +780,7 @@
             \ set tabstop=4
             " add support for compile time errors use new :Shell command
     " Lilypond-book Files
-        autocmd BufEnter,BufNewFile *.lytex
+        autocmd BufRead,BufNewFile *.lytex
             \ setfiletype lilypond |
             \ setfiletype latex |
             \ setlocal textwidth=80 |
@@ -776,11 +797,11 @@
         endif
         let did_load_csvfiletype=1
         augroup filetypedetect
-        au! BufEnter,BufRead,BufNewFile *.csv,*.dat
+        au! BufRead,BufNewFile *.csv,*.dat
             \ setfiletype csv
         augroup END
     " HTML
-        autocmd BufEnter,BufRead,BufNewFile *.html
+        autocmd BufRead,BufNewFile *.html
             \ nnoremap <leader>hf :%s/<[^>]*>/\r&\r/g<CR> |
             \ nnoremap <leader>hc :g/^$/d<CR> |
             \ setfiletype htmldjango |
@@ -790,13 +811,13 @@
         autocmd FileType javascript
             \ set omnifunc=javascriptcomplete#CompleteJS
     " CSS
-        autocmd BufEnter,BufRead,BufNewFile *.css
+        autocmd BufRead,BufNewFile *.css
             \ nnoremap <leader>hf :%s/<[^>]*>/\r&\r/g<CR> |
             \ nnoremap <leader>hc :g/^$/d<CR> |
             \ setfiletype css |
             \ set omnifunc=csscomplete#CompleteCSS
     " Python
-        autocmd BufEnter,BufRead,BufNewFile *.py
+        autocmd BufRead,BufNewFile *.py
             \ set omnifunc=pythoncomplete#Complete |
             \ set foldnestmax=2 |
             \ set foldlevel=0 |
