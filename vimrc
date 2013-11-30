@@ -1,10 +1,8 @@
 " VIM Configuration for Brian Clements
-" Version:      1.0.4
+" Version:  1.0.5
 " Date:         
-" Changes:  - removed unnesesary BufEnter's, they kept on reapplying 
-"             fold levels
-"           - changed python rope doc keybind
-"           - fugitive/git keybinds
+" Changes:  - Lilypond modifications (*.ily, shiftwidth)
+"           - git commands
 " ------------------
 
 " ------------------
@@ -401,6 +399,7 @@
             nnoremap <silent><leader>sfm :setlocal filetype=markdown<CR>
             nnoremap <silent><leader>sfb :setlocal filetype=bash<CR>
             nnoremap <silent><leader>sfh :setlocal filetype=htmldjango<CR>
+            nnoremap <silent><leader>sfl :setlocal filetype=lilypond<CR>
         " Various ways to run external commands
             " Using Shell function, displays in vim
                 nnoremap <leader>sr :Shell<space>
@@ -610,17 +609,22 @@
         nnoremap <Leader>gfd :Gremove<CR>
         nnoremap <Leader>gfr :Gread<CR>
         " Branching
+        nnoremap <leader>gb :Git branch<space>
         nnoremap <leader>gb? :Shell git branch -a<CR>
         nnoremap <leader>gbb :Git checkout<space>
         nnoremap <leader>gbf :Git checkout -b<space>
-        nnoremap <leader>gbD :!git checkout master<CR>:!git branch -d<space>
+        nnoremap <leader>gbm :Git branch -m<space>
+        nnoremap <leader>gbd :Shell git branch -d<space>
+        nnoremap <leader>gbD :Shell git branch -D<space>
         " Viewing status
         nnoremap <Leader>g? :Gstatus<CR>
         nnoremap <Leader>gt? :Shell git tags<CR>
         " Logs
+        nnoremap <Leader>gl :Shell git hist-blk<CR>
+        nnoremap <Leader>gL :Shell git hist2-blk<CR>
         nnoremap <Leader>glb :Gblame<CR>
         nnoremap <Leader>gll :!terminator -f --command="git hist" &<CR>
-        nnoremap <Leader>glt :!terminator -f --command="git tree" &<CR>
+        nnoremap <Leader>glL :!terminator -f --command="git hist2" &<CR>
         " Remotes
         nnoremap <leader>gr? :Shell git remote -v<CR>
         nnoremap <leader>gr :Shell git remote<space>
@@ -630,7 +634,11 @@
         nnoremap <leader>grP :Git push -u --tags<space>
         nnoremap <leader>grp :Git push<space>
         " Merges
-        nnoremap <leader>gm :!git checkout master<CR>:Git merge<space>
+        nnoremap <leader>gm :Git merge<space>
+        " Submodules
+        nnoremap <leader>gs :Git submodule<space>
+        nnoremap <leader>gsa :Git submodule add<space>
+        nnoremap <leader>gsu :Git submodule update --init --recursive<CR>
         " Other
         nnoremap <Leader>gwq :Gwq<CR>
         nnoremap <leader>gV :!gitg<CR>
@@ -764,7 +772,7 @@
             \ inoremap <S-CR> <CR><C-t> |
             \ inoremap <C-S-CR> <CR><C-d><BS>
     " Lilypond Files
-        autocmd BufRead,BufNewFile *.ly
+        autocmd BufRead,BufNewFile *.ly,*.ily
             \ setfiletype lilypond |
             \ setlocal noai nocin nosi inde= |
             \ setlocal autoindent |
@@ -777,7 +785,8 @@
             \ nnoremap <leader>lpS :!killall timidity &<CR> |
             \ nnoremap <leader>lv :!evince "%:p:r.pdf" &<CR> |
             \ nnoremap <leader>lvs :!evince "%:p:h:h/score/score.pdf" &<CR> |
-            \ set tabstop=4
+            \ set tabstop=4 |
+            \ set shiftwidth=4
             " add support for compile time errors use new :Shell command
     " Lilypond-book Files
         autocmd BufRead,BufNewFile *.lytex
