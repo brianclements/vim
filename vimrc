@@ -1,8 +1,8 @@
 " VIM Configuration for Brian Clements
-" Version:  1.0.5
-" Date:         
-" Changes:  - Lilypond modifications (*.ily, shiftwidth)
-"           - git commands
+" Version:  1.0.6
+" Date:     2013.12.01-01:56 
+" Changes:  - git commands (submodules, status)
+"           - rooter (submodules fix)
 " ------------------
 
 " ------------------
@@ -599,7 +599,7 @@
             \ "Initial commit"<CR> :e %<CR>
         nnoremap <Leader>gwc :w<CR>:Gcommit -S<CR>
         nnoremap <Leader>gc :Gcommit -S<CR>
-        nnoremap <Leader>gg :Gwrite<CR>
+        nnoremap <Leader>gg :Gwrite<CR>:Gstatus<CR><c-w>w
         nnoremap <Leader>gt :Git tag -s v
         nnoremap <Leader>gd :Gdiff<CR>
         nnoremap <leader>gs :Git stash<CR>
@@ -636,8 +636,10 @@
         " Merges
         nnoremap <leader>gm :Git merge<space>
         " Submodules
+        nnoremap <leader>gs? :Shell git submodule status<CR>
         nnoremap <leader>gs :Git submodule<space>
         nnoremap <leader>gsa :Git submodule add<space>
+        nnoremap <leader>gss :Git submodule sync<CR>
         nnoremap <leader>gsu :Git submodule update --init --recursive<CR>
         " Other
         nnoremap <Leader>gwq :Gwq<CR>
@@ -740,9 +742,9 @@
         let g:rooter_manual_only = 0
         let g:rooter_use_lcd = 1
         let g:rooter_change_directory_for_non_project_files = 1
-        let g:rooter_patterns = ['README.md', 'LICENSE', 'VERSION', 'doc/', 
-            \ 'docs/', 'AUTHORS.MD', 'Rakefile', 'python', '.git/',
-            \ '.gitignore', ]
+        let g:rooter_patterns = ['.git', '.git/', '.gitignore', 'README.md',
+            \ 'README.rst', 'LICENSE', 'VERSION', 'doc/', 'docs/', 'AUTHORS.MD',
+            \ 'Rakefile', 'python', '.gitignore', ]
         " not working
         " nnoremap <silent> <leader>scd <Plug>RooterChangeToRootDirectory
 
