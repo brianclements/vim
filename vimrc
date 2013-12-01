@@ -1,8 +1,8 @@
 " VIM Configuration for Brian Clements
-" Version:  1.0.6
-" Date:     2013.12.01-01:56 
-" Changes:  - git commands (submodules, status)
-"           - rooter (submodules fix)
+" Version:  1.0.7
+" Date:     2013.12.01-03:45 
+" Changes:  - git commands (submodules, recursive checkout/update/pull)
+"           - vim filetype shortcut
 " ------------------
 
 " ------------------
@@ -400,6 +400,7 @@
             nnoremap <silent><leader>sfb :setlocal filetype=bash<CR>
             nnoremap <silent><leader>sfh :setlocal filetype=htmldjango<CR>
             nnoremap <silent><leader>sfl :setlocal filetype=lilypond<CR>
+            nnoremap <silent><leader>sfg :setlocal filetype=git<CR>
         " Various ways to run external commands
             " Using Shell function, displays in vim
                 nnoremap <leader>sr :Shell<space>
@@ -608,6 +609,7 @@
         nnoremap <Leader>gfm :Gmove<space>
         nnoremap <Leader>gfd :Gremove<CR>
         nnoremap <Leader>gfr :Gread<CR>
+        nnoremap <Leader>gfc :Git clean -xdf
         " Branching
         nnoremap <leader>gb :Git branch<space>
         nnoremap <leader>gb? :Shell git branch -a<CR>
@@ -641,6 +643,9 @@
         nnoremap <leader>gsa :Git submodule add<space>
         nnoremap <leader>gss :Git submodule sync<CR>
         nnoremap <leader>gsu :Git submodule update --init --recursive<CR>
+        nnoremap <leader>gsp :Shell git submodule foreach --recursive "(
+            \ git checkout master; git pull)&"<CR>
+        nnoremap <leader>gsc :Shell git submodule foreach --recursive git checkout master<CR>
         " Other
         nnoremap <Leader>gwq :Gwq<CR>
         nnoremap <leader>gV :!gitg<CR>
