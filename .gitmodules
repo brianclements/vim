@@ -19,9 +19,6 @@
 [submodule "vimoutliner/vimoutliner"]
     path = bundle/vimoutliner
     url = https://github.com/vimoutliner/vimoutliner.git
-[submodule "vim-scripts/Tagbar"]
-    path = bundle/Tagbar
-    url = https://github.com/vim-scripts/Tagbar.git
 [submodule "wincent/Command-T"]
     path = bundle/Command-T
     url = https://github.com/wincent/Command-T.git
