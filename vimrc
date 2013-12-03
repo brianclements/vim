@@ -1,8 +1,9 @@
 " VIM Configuration for Brian Clements
-" Version:  1.0.7
-" Date:     2013.12.01-03:45 
-" Changes:  - git commands (submodules, recursive checkout/update/pull)
-"           - vim filetype shortcut
+" Version:  1.0.8
+" Date:     2013.12.03-00:13 
+" Changes:  - git commands (reset hard, submodule)
+"           - edit vimrc file in .vim folder directly instead of editing through
+"             the ~/.vimrc symlink so that fugitive can detect .git folder
 " ------------------
 
 " ------------------
@@ -251,11 +252,10 @@
     " Change the mapleader from \ to ;
         let mapleader=";"
     " Quick edit and reload of .vimrc
-        nnoremap <silent> <leader>ev :e $MYVIMRC<CR>
-        nnoremap <silent> <leader>evg :e $HOME/.vim/README.md<CR>
+        nnoremap <silent> <leader>ev :e $HOME/.vim/vimrc<CR>
         nnoremap <silent> <leader>Sv :so $MYVIMRC<CR>
         nnoremap <silent> <leader>Sf :so %<CR>:echo 'loaded file: ' . @%<CR>
-        nnoremap <silent> <leader>wSv :w<CR><bar>:so $MYVIMRC<CR>
+        nnoremap <silent> <leader>wSv :w<CR>:so $MYVIMRC<CR>
         nnoremap <silent> <leader>eg :e ~/.gitconfig<CR>
     " Basic functions made easier
         nnoremap <silent> <leader>x :x<CR>
@@ -567,6 +567,7 @@
             endif
         endfunction
         command! JumpWindow call JumpWindow()
+
 " ------------------
 " Plugin Options
 " ------------------
@@ -610,6 +611,7 @@
         nnoremap <Leader>gfd :Gremove<CR>
         nnoremap <Leader>gfr :Gread<CR>
         nnoremap <Leader>gfc :Git clean -xdf
+        nnoremap <Leader>gRH :Shell git reset --hard
         " Branching
         nnoremap <leader>gb :Git branch<space>
         nnoremap <leader>gb? :Shell git branch -a<CR>
@@ -640,12 +642,14 @@
         " Submodules
         nnoremap <leader>gs? :Shell git submodule status<CR>
         nnoremap <leader>gs :Git submodule<space>
-        nnoremap <leader>gsa :Git submodule add<space>
-        nnoremap <leader>gss :Git submodule sync<CR>
-        nnoremap <leader>gsu :Git submodule update --init --recursive<CR>
+        nnoremap <leader>gsa :Git submodule add https://github.com/
+        nnoremap <leader>gss :Shell git submodule sync<CR>
+        nnoremap <leader>gsU :Git submodule update --init --recursive<CR>
+        nnoremap <leader>gsu :Git submodule update --recursive<CR>
+        nnoremap <leader>gsc :Shell git submodule foreach --recursive
+            \ git checkout master<CR>
         nnoremap <leader>gsp :Shell git submodule foreach --recursive "(
-            \ git checkout master; git pull)&"<CR>
-        nnoremap <leader>gsc :Shell git submodule foreach --recursive git checkout master<CR>
+            \ git pull)&"<CR>
         " Other
         nnoremap <Leader>gwq :Gwq<CR>
         nnoremap <leader>gV :!gitg<CR>
