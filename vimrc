@@ -1,9 +1,13 @@
 " VIM Configuration for Brian Clements
-" Version:  1.0.8
-" Date:     2013.12.03-00:13 
-" Changes:  - git commands (reset hard, submodule)
-"           - edit vimrc file in .vim folder directly instead of editing through
-"             the ~/.vimrc symlink so that fugitive can detect .git folder
+" Version:  1.0.9
+" Date:     2013.12.04-22:18 
+" Changes:  - git commands
+"               - made most commands use Shell
+"               - added git rebase section
+"               - changed git stash keybind conflict
+"               - added git show for word under cursor
+"           - updated rooter patterns
+"           - Reengineered MakeSmallWindow into SmartResizeWindow
 " ------------------
 
 " ------------------
@@ -365,7 +369,7 @@
             nnoremap <silent> <leader>vm :set columns=80 <bar> set lines=20<CR>
             nnoremap <silent> <leader>vM :set columns=190 <bar> set lines=45<CR>
         " Quick resize window
-            nnoremap <silent> <C-w>r :exe "resize " . (winheight(1) * 1/4)<CR>
+            nnoremap <silent> <C-w>r :SmartResizeWindow 20<CR>
         " Scroll through colorschemes
             nnoremap <silent> <leader>vc :SCROLL<CR>
     " sudo-and-write command
@@ -459,7 +463,7 @@
             else
                 silent! execute 'silent %!'. command
             endif
-            silent! execute 'MakeSmallWindow'
+            silent! execute 'SmartResizeWindow 20'
             silent! redraw
             silent! execute 'au BufUnload <buffer> execute bufwinnr(' . bufnr('#') . ') . ''wincmd w'''
             silent! execute 'nnoremap <silent> <buffer> <LocalLeader>srR :call <SID>ExecuteInShell(''' . command . ''')<CR>'
@@ -538,17 +542,21 @@
         " then toggle to go back to normal code width 80-wide
     " code mode?
         " two separate modes? toggle in one?
-    " Make small window
-        function! MakeSmallWindow()
+    " Resize a window somewhat intelligently
+        function! SmartResizeWindow(...)
             let curwinsize = line('$')
-            let maxsize = 15
-            if curwinsize > maxsize
-                exe "resize " . maxsize
+            if a:0 > 0
+                let maxsize = a:1
+                if maxsize > curwinsize
+                    exec 'resize ' . (curwinsize + 1)
+                else
+                    exec 'resize ' . maxsize
+                endif
             else
-                exe "resize " . (line('$') + 1)
+                exec 'resize ' . (curwinsize + 1)
             endif
         endfunction
-        command! MakeSmallWindow call MakeSmallWindow()
+        command! -nargs=* SmartResizeWindow call SmartResizeWindow(<f-args>)
     " Jump between current/newest window
         function! JumpWindow()
             let curwin = winnr()
@@ -604,8 +612,8 @@
         nnoremap <Leader>gg :Gwrite<CR>:Gstatus<CR><c-w>w
         nnoremap <Leader>gt :Git tag -s v
         nnoremap <Leader>gd :Gdiff<CR>
-        nnoremap <leader>gs :Git stash<CR>
-        nnoremap <leader>gsp :Git stash pop<CR>
+        nnoremap <leader>gS :Shell git stash<CR>
+        nnoremap <leader>gSp :Shell git stash pop<CR>
         " Structure Editing
         nnoremap <Leader>gfm :Gmove<space>
         nnoremap <Leader>gfd :Gremove<CR>
@@ -621,11 +629,12 @@
         nnoremap <leader>gbd :Shell git branch -d<space>
         nnoremap <leader>gbD :Shell git branch -D<space>
         " Viewing status
-        nnoremap <Leader>g? :Gstatus<CR>
+        nnoremap <Leader>g? :Gstatus<CR>:SmartResizeWindow 30<CR>:go<CR>
         nnoremap <Leader>gt? :Shell git tags<CR>
         " Logs
         nnoremap <Leader>gl :Shell git hist-blk<CR>
         nnoremap <Leader>gL :Shell git hist2-blk<CR>
+        nnoremap <Leader>gls :Shell git show <cword><CR>
         nnoremap <Leader>glb :Gblame<CR>
         nnoremap <Leader>gll :!terminator -f --command="git hist" &<CR>
         nnoremap <Leader>glL :!terminator -f --command="git hist2" &<CR>
@@ -634,18 +643,22 @@
         nnoremap <leader>gr :Shell git remote<space>
         nnoremap <leader>gra :Git remote add github https://github.com/brianclements/
         nnoremap <leader>grc :Git remote prune<space>
-        nnoremap <leader>gru :Git pull<space>
+        nnoremap <leader>gru :Shell git pull<space>
         nnoremap <leader>grP :Git push -u --tags<space>
         nnoremap <leader>grp :Git push<space>
         " Merges
         nnoremap <leader>gm :Git merge<space>
+        " Rebase
+        nnoremap <leader>gRs :Git rebase -i HEAD~
+        nnoremap <leader>gR :Shell git rebase<space> 
         " Submodules
         nnoremap <leader>gs? :Shell git submodule status<CR>
         nnoremap <leader>gs :Git submodule<space>
         nnoremap <leader>gsa :Git submodule add https://github.com/
+        nnoremap <leader>gsi :Shell git submodule init<space>
+        nnoremap <leader>gsU :Shell git submodule update --init --recursive<CR>
+        nnoremap <leader>gsu :Shell git submodule update --recursive<CR>
         nnoremap <leader>gss :Shell git submodule sync<CR>
-        nnoremap <leader>gsU :Git submodule update --init --recursive<CR>
-        nnoremap <leader>gsu :Git submodule update --recursive<CR>
         nnoremap <leader>gsc :Shell git submodule foreach --recursive
             \ git checkout master<CR>
         nnoremap <leader>gsp :Shell git submodule foreach --recursive "(
@@ -751,9 +764,9 @@
         let g:rooter_manual_only = 0
         let g:rooter_use_lcd = 1
         let g:rooter_change_directory_for_non_project_files = 1
-        let g:rooter_patterns = ['.git', '.git/', '.gitignore', 'README.md',
-            \ 'README.rst', 'LICENSE', 'VERSION', 'doc/', 'docs/', 'AUTHORS.MD',
-            \ 'Rakefile', 'python', '.gitignore', ]
+        let g:rooter_patterns = ['.git', '.git/', '.gitignore', '.gitmodules',
+            \ 'README.md', 'README.rst', 'LICENSE', 'VERSION', 'doc/', 'docs/',
+            \ 'AUTHORS.MD', 'Rakefile', 'python', ]
         " not working
         " nnoremap <silent> <leader>scd <Plug>RooterChangeToRootDirectory
 
