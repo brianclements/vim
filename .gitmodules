@@ -75,3 +75,6 @@
 [submodule "bundle/Tagbar"]
 	path = bundle/Tagbar
 	url = http://github.com/majutsushi/tagbar.git
+[submodule "bundle/lilyvim"]
+	path = bundle/lilyvim
+	url = https://github.com/lfairy/lilyvim
