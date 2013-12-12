@@ -1,13 +1,12 @@
 " VIM Configuration for Brian Clements
-" Version:  1.0.9
-" Date:     2013.12.04-22:18 
+" Version:  1.0.10
+" Date:     2013.12.11-22:15 
 " Changes:  - git commands
-"               - made most commands use Shell
-"               - added git rebase section
-"               - changed git stash keybind conflict
-"               - added git show for word under cursor
-"           - updated rooter patterns
-"           - Reengineered MakeSmallWindow into SmartResizeWindow
+"               - git remote delete shortcut
+"               - submodule deinit
+"               - moved tag commands to own section
+"               - git init cd's to current dir first
+"           - submodule lfairy/lilyvim
 " ------------------
 
 " ------------------
@@ -48,6 +47,7 @@
             Bundle 'ap/vim-css-color'
             Bundle 'tpope/vim-repeat'
             Bundle 'tpope/vim-surround'
+            Bundle 'lfairy/lilyvim'
         syntax on
         filetype plugin indent on
     " Default directory
@@ -605,15 +605,19 @@
         " Normal rotation
         nnoremap <leader>g :Git<space>
         nnoremap <leader>gI :!git init<CR>
-        nnoremap <Leader>gi :!git init<CR> :!git add .<CR> :!git commit -S -m
+        nnoremap <Leader>gi :cd %:p:h<CR>:!git init<CR> :!git add .<CR> :!git commit -S -m
             \ "Initial commit"<CR> :e %<CR>
         nnoremap <Leader>gwc :w<CR>:Gcommit -S<CR>
         nnoremap <Leader>gc :Gcommit -S<CR>
         nnoremap <Leader>gg :Gwrite<CR>:Gstatus<CR><c-w>w
-        nnoremap <Leader>gt :Git tag -s v
         nnoremap <Leader>gd :Gdiff<CR>
         nnoremap <leader>gS :Shell git stash<CR>
         nnoremap <leader>gSp :Shell git stash pop<CR>
+        " Tags
+        nnoremap <Leader>gt? :Shell git tags<CR>
+        nnoremap <Leader>gt :Git tag -s v
+        nnoremap <Leader>gtd :Git tag -d<space>
+        nnoremap <Leader>gtD :Git push github :refs/tags/
         " Structure Editing
         nnoremap <Leader>gfm :Gmove<space>
         nnoremap <Leader>gfd :Gremove<CR>
@@ -630,7 +634,6 @@
         nnoremap <leader>gbD :Shell git branch -D<space>
         " Viewing status
         nnoremap <Leader>g? :Gstatus<CR>:SmartResizeWindow 30<CR>:go<CR>
-        nnoremap <Leader>gt? :Shell git tags<CR>
         " Logs
         nnoremap <Leader>gl :Shell git hist-blk<CR>
         nnoremap <Leader>gL :Shell git hist2-blk<CR>
@@ -646,6 +649,7 @@
         nnoremap <leader>gru :Shell git pull<space>
         nnoremap <leader>grP :Git push -u --tags<space>
         nnoremap <leader>grp :Git push<space>
+        nnoremap <leader>grD :Git push github --delete<space>
         " Merges
         nnoremap <leader>gm :Git merge<space>
         " Rebase
@@ -663,6 +667,7 @@
             \ git checkout master<CR>
         nnoremap <leader>gsp :Shell git submodule foreach --recursive "(
             \ git pull)&"<CR>
+        nnoremap <leader>gsD :Shell git submodule deinit<space>
         " Other
         nnoremap <Leader>gwq :Gwq<CR>
         nnoremap <leader>gV :!gitg<CR>
