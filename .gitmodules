@@ -78,3 +78,6 @@
 [submodule "bundle/lilyvim"]
 	path = bundle/lilyvim
 	url = https://github.com/lfairy/lilyvim
+[submodule "bundle/vim-virtualenv"]
+	path = bundle/vim-virtualenv
+	url = https://github.com/jmcantrell/vim-virtualenv.git
