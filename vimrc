@@ -1,12 +1,9 @@
 " VIM Configuration for Brian Clements
-" Version:  1.0.10
-" Date:     2013.12.11-22:15 
-" Changes:  - git commands
-"               - git remote delete shortcut
-"               - submodule deinit
-"               - moved tag commands to own section
-"               - git init cd's to current dir first
-"           - submodule lfairy/lilyvim
+" Version:  1.0.11
+" Date:     2013.12.19-23:42
+" Changes:  Plugin:
+"               - added vim-virtualenv bundle
+"               - configured some vim-virtualenv keybinds and settings
 " ------------------
 
 " ------------------
@@ -48,6 +45,7 @@
             Bundle 'tpope/vim-repeat'
             Bundle 'tpope/vim-surround'
             Bundle 'lfairy/lilyvim'
+            Bundle 'jmcantrell/vim-virtualenv'
         syntax on
         filetype plugin indent on
     " Default directory
@@ -774,6 +772,11 @@
             \ 'AUTHORS.MD', 'Rakefile', 'python', ]
         " not working
         " nnoremap <silent> <leader>scd <Plug>RooterChangeToRootDirectory
+    " vim-virtualenv
+        let g:virtualenv_directory = '../venv'
+        nnoremap <leader>pv? :VirtualEnvList<CR>
+        nnoremap <leader>pva :VirtualEnvActivate<space>
+        nnoremap <leader>pvd :VirtualEnvDeactivate<CR>
 
 " ------------------
 " Filetype Specific Options
