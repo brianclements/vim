@@ -1,9 +1,11 @@
 " VIM Configuration for Brian Clements
-" Version:  1.0.11
-" Date:     2013.12.19-23:42
-" Changes:  Plugin:
-"               - added vim-virtualenv bundle
-"               - configured some vim-virtualenv keybinds and settings
+" Version:  1.0.12
+" Date:     2014.02.22-23:31 
+" Changes:  -added dockerfile syntax support
+"           -changed normal mode capitalization bind
+"           -added normal mode spell correction mapping
+"           -updated git submodule "update" binding
+"           -added git submodule "reset" binding
 " ------------------
 
 " ------------------
@@ -418,9 +420,10 @@
         nnoremap \s 1z=
         nnoremap \S a<C-x><C-s>
         inoremap <C-\> <Esc>[s1z=`]a
+        nnoremap <C-\> [s1z=`]``e
         nnoremap \a zg
         nnoremap \r zuw
-        nnoremap \c b~
+        nnoremap \C b~
         nnoremap \\ :setlocal spell!<CR>
         vnoremap \q gq
         nnoremap \q gqap
@@ -659,12 +662,12 @@
         nnoremap <leader>gsa :Git submodule add https://github.com/
         nnoremap <leader>gsi :Shell git submodule init<space>
         nnoremap <leader>gsU :Shell git submodule update --init --recursive<CR>
-        nnoremap <leader>gsu :Shell git submodule update --recursive<CR>
+        nnoremap <leader>gsr :Shell git submodule update --recursive<CR>
+        nnoremap <leader>gsu :Shell git submodule foreach --recursive "(
+            \ git pull)&"<CR>
         nnoremap <leader>gss :Shell git submodule sync<CR>
         nnoremap <leader>gsc :Shell git submodule foreach --recursive
             \ git checkout master<CR>
-        nnoremap <leader>gsp :Shell git submodule foreach --recursive "(
-            \ git pull)&"<CR>
         nnoremap <leader>gsD :Shell git submodule deinit<space>
         " Other
         nnoremap <Leader>gwq :Gwq<CR>
@@ -783,7 +786,7 @@
 " ------------------
     " All files
         autocmd BufEnter *.*
-            \ exec 'Rooter'
+           \ exec 'Rooter'
     " Markdown (default for all text files)
         autocmd BufRead,BufNewFile *.txt,*.text,*.md,*.markdown
             \ setlocal spell |
@@ -863,3 +866,6 @@
             \ set foldnestmax=2 |
             \ set foldlevel=0 |
             \ set foldlevelstart=2
+    " Dockerfiles
+        autocmd BufEnter *
+           \ if @% == 'Dockerfile' | set ft=sh | endif
