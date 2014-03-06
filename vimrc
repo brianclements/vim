@@ -1,11 +1,8 @@
 " VIM Configuration for Brian Clements
-" Version:  1.0.12
-" Date:     2014.02.22-23:31 
-" Changes:  -added dockerfile syntax support
-"           -changed normal mode capitalization bind
-"           -added normal mode spell correction mapping
-"           -updated git submodule "update" binding
-"           -added git submodule "reset" binding
+" Version:  1.0.13
+" Date:     2014.03.06-01:01 
+" Changes:  -moved vim-virtualenv stuff together
+"           -added checkout for <cword>
 " ------------------
 
 " ------------------
@@ -629,6 +626,7 @@
         nnoremap <leader>gb :Git branch<space>
         nnoremap <leader>gb? :Shell git branch -a<CR>
         nnoremap <leader>gbb :Git checkout<space>
+        nnoremap <leader>gbB :Git checkout <cword><CR>
         nnoremap <leader>gbf :Git checkout -b<space>
         nnoremap <leader>gbm :Git branch -m<space>
         nnoremap <leader>gbd :Shell git branch -d<space>
@@ -718,8 +716,6 @@
                 let g:pymode_lint_write = 1
             " Auto open cwindow if errors found
                 let g:pymode_lint_cwindow = 1
-        " Support virtualenv
-            let g:pymode_virtualenv = 1
         " Enable breakpoints plugin
             let g:pymode_breakpoint = 1
             let g:pymode_breakpoint_key = '<leader>pb'
@@ -776,10 +772,12 @@
         " not working
         " nnoremap <silent> <leader>scd <Plug>RooterChangeToRootDirectory
     " vim-virtualenv
+        let g:pymode_virtualenv = 1
         let g:virtualenv_directory = '../venv'
         nnoremap <leader>pv? :VirtualEnvList<CR>
         nnoremap <leader>pva :VirtualEnvActivate<space>
         nnoremap <leader>pvd :VirtualEnvDeactivate<CR>
+        nnoremap <leader>pvi :Shell virtualenv ../venv/
 
 " ------------------
 " Filetype Specific Options
