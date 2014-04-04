@@ -1,8 +1,11 @@
 " VIM Configuration for Brian Clements
-" Version:  1.0.13
-" Date:     2014.03.06-01:01 
-" Changes:  -moved vim-virtualenv stuff together
-"           -added checkout for <cword>
+" Version:  1.1.0
+" Date:     2014.04.04-02:00 
+" Changes:  - whitespace after git merge
+"           - tmux-navigator plugin
+"           - MyFollowSymlink() for expanding symlinked files
+"           - added ! to :w for MyFollowSymlink() compatability, :wa!
+"           - changed remaining use of https to ssh for github
 " ------------------
 
 " ------------------
@@ -45,6 +48,7 @@
             Bundle 'tpope/vim-surround'
             Bundle 'lfairy/lilyvim'
             Bundle 'jmcantrell/vim-virtualenv'
+            Bundle 'christoomey/vim-tmux-navigator'
         syntax on
         filetype plugin indent on
     " Default directory
@@ -264,7 +268,8 @@
         nnoremap <leader>q :q!
         nnoremap <leader>Q :qa!
         nnoremap <silent> <leader>w :w<CR>
-        nnoremap <silent> <leader>W :wa<CR>
+        nnoremap <silent> <leader>W :w!<CR>
+        nnoremap <silent> <leader>Wa :wa!<CR>
         nnoremap <leader>wa :saveas<space>
         nnoremap <leader>e :e<space>
         nnoremap <C-w>o :only
@@ -398,7 +403,7 @@
             nnoremap <silent><leader>sfn :setlocal filetype=<CR>
             nnoremap <silent><leader>sfp :setlocal filetype=python<CR>
             nnoremap <silent><leader>sfm :setlocal filetype=markdown<CR>
-            nnoremap <silent><leader>sfb :setlocal filetype=bash<CR>
+            nnoremap <silent><leader>sfb :setlocal filetype=sh<CR>
             nnoremap <silent><leader>sfh :setlocal filetype=htmldjango<CR>
             nnoremap <silent><leader>sfl :setlocal filetype=lilypond<CR>
             nnoremap <silent><leader>sfg :setlocal filetype=git<CR>
@@ -573,6 +578,23 @@
             endif
         endfunction
         command! JumpWindow call JumpWindow()
+    " Follow symlinks when opening a file
+        " Sources:
+        "  - https://github.com/tpope/vim-fugitive/issues/147#issuecomment-27607563
+        "  - https://github.com/tpope/vim-fugitive/issues/147#issuecomment-7572351
+        "  - http://www.reddit.com/r/vim/comments/yhsn6/is_it_possible_to_work_around_the_symlink_bug/c5w91qw
+        " Echoing a warning does not appear to work:
+        "   echohl WarningMsg | echo "Resolving symlink." | echohl None |
+        function! MyFollowSymlink(...)
+        let fname = a:0 ? a:1 : expand('%')
+        if getftype(fname) != 'link'
+            return
+        endif
+        let resolvedfile = fnameescape(resolve(fname))
+        exec 'file ' . resolvedfile
+        endfunction
+        command! FollowSymlink call MyFollowSymlink()
+        autocmd BufReadPost * call MyFollowSymlink(expand('<afile>'))
 
 " ------------------
 " Plugin Options
@@ -643,7 +665,7 @@
         " Remotes
         nnoremap <leader>gr? :Shell git remote -v<CR>
         nnoremap <leader>gr :Shell git remote<space>
-        nnoremap <leader>gra :Git remote add github https://github.com/brianclements/
+        nnoremap <leader>gra :Git remote add github git@github.com:brianclements/
         nnoremap <leader>grc :Git remote prune<space>
         nnoremap <leader>gru :Shell git pull<space>
         nnoremap <leader>grP :Git push -u --tags<space>
@@ -653,11 +675,11 @@
         nnoremap <leader>gm :Git merge<space>
         " Rebase
         nnoremap <leader>gRs :Git rebase -i HEAD~
-        nnoremap <leader>gR :Shell git rebase<space> 
+        nnoremap <leader>gR :Shell git rebase<space>
         " Submodules
         nnoremap <leader>gs? :Shell git submodule status<CR>
         nnoremap <leader>gs :Git submodule<space>
-        nnoremap <leader>gsa :Git submodule add https://github.com/
+        nnoremap <leader>gsa :Git submodule add git@github.com:brianclements/
         nnoremap <leader>gsi :Shell git submodule init<space>
         nnoremap <leader>gsU :Shell git submodule update --init --recursive<CR>
         nnoremap <leader>gsr :Shell git submodule update --recursive<CR>
