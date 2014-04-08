@@ -1,11 +1,10 @@
 " VIM Configuration for Brian Clements
-" Version:  1.1.0
-" Date:     2014.04.04-02:00 
-" Changes:  - whitespace after git merge
-"           - tmux-navigator plugin
-"           - MyFollowSymlink() for expanding symlinked files
-"           - added ! to :w for MyFollowSymlink() compatability, :wa!
-"           - changed remaining use of https to ssh for github
+" Version:  1.1.1
+" Date:     2014.04.08-00:09 
+" Changes:  
+"   - there is no git filetype -> gitcommit
+"   - added --force to clearing caches
+"   - disabled some tmux mapping keys
 " ------------------
 
 " ------------------
@@ -258,6 +257,7 @@
         let mapleader=";"
     " Quick edit and reload of .vimrc
         nnoremap <silent> <leader>ev :e $HOME/.vim/vimrc<CR>
+        nnoremap <silent> <leader>ed :e $DOTFILES/README.md<CR>
         nnoremap <silent> <leader>Sv :so $MYVIMRC<CR>
         nnoremap <silent> <leader>Sf :so %<CR>:echo 'loaded file: ' . @%<CR>
         nnoremap <silent> <leader>wSv :w<CR>:so $MYVIMRC<CR>
@@ -393,10 +393,10 @@
     " System commands
         nnoremap <leader>s? :pwd<CR>
         " Clear various caches,registers, and backup files
-            nnoremap <leader>sCv :!rm ~/.vim/tmp/view/*<CR>
-            nnoremap <leader>sCb :!rm ~/.vim/tmp/backup/*<CR>
-            nnoremap <leader>sCs :!rm ~/.vim/tmp/swap/*<CR>
-            nnoremap <leader>sCu :!rm ~/.vim/tmp/undo/*<CR>
+            nnoremap <leader>sCv :!rm -f ~/.vim/tmp/view/*<CR>
+            nnoremap <leader>sCb :!rm -f ~/.vim/tmp/backup/*<CR>
+            nnoremap <leader>sCs :!rm -f ~/.vim/tmp/swap/*<CR>
+            nnoremap <leader>sCu :!rm -f ~/.vim/tmp/undo/*<CR>
             nnoremap <leader>sCr :ClearRegisters<CR>
             nnoremap <silent><leader>scd :cd %:p:h<CR>:pwd<CR>
         " Manually Set filetype for arbitrary buffers
@@ -406,7 +406,7 @@
             nnoremap <silent><leader>sfb :setlocal filetype=sh<CR>
             nnoremap <silent><leader>sfh :setlocal filetype=htmldjango<CR>
             nnoremap <silent><leader>sfl :setlocal filetype=lilypond<CR>
-            nnoremap <silent><leader>sfg :setlocal filetype=git<CR>
+            nnoremap <silent><leader>sfg :setlocal filetype=gitcommit<CR>
         " Various ways to run external commands
             " Using Shell function, displays in vim
                 nnoremap <leader>sr :Shell<space>
@@ -441,6 +441,9 @@
             nnoremap <leader>prf :Shell python %:p<CR>
         " Run selection to new window
             " vnoremap <leader>pR :Python
+    " tmux support: disable these keys in vim
+        map <C-f>p <Nop>
+        map <C-f>n <Nop>
 
 " ------------------
 " Functions & Tools
@@ -777,9 +780,9 @@
         let g:CommandTHighlightColor='PmenuSel'
         :set wildignore+=*.*~,*~,*.git,*.pyc,*.pdf,*.PDF
     " Accordion Windows
-        nnoremap <silent> <C-w>a :Accordion 3<CR>
-        nnoremap <silent> <C-w>A :AccordionStop<CR>
-        nnoremap <silent> <C-w>ad :AccordionDiff<CR>
+        nnoremap <silent> <C-w>a :Accordion 3<CR>:echo 'Accordian windows enabled'<CR>
+        nnoremap <silent> <C-w>A :AccordionStop<CR>:echo 'Accordian windows disabled'<CR>
+        nnoremap <silent> <C-w>ad :AccordionDiff<CR>:echo 'Accordian diff mode enabled'<CR>
         nnoremap <silent> <C-w>ai :AccordionZoomIn<CR>
         nnoremap <silent> <C-w>ao :AccordionZoomOut<CR>
     " Supertab
