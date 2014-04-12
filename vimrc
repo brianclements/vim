@@ -1,10 +1,13 @@
 " VIM Configuration for Brian Clements
-" Version:  1.1.1
-" Date:     2014.04.08-00:09 
+" Version:  1.1.2
+" Date:     2014.04.12-00:21 
 " Changes:  
 "   - there is no git filetype -> gitcommit
 "   - added --force to clearing caches
 "   - disabled some tmux mapping keys
+"   - reinstated old folding code space, works better in terminals
+"   - AddPyLintIgnore() and keybind
+"   - git cherry-pick bind using cword
 " ------------------
 
 " ------------------
@@ -346,10 +349,10 @@
     " Disable auto-formatting for pasting large chucks of text
         set pastetoggle=<F2>
     " Folding
-        nnoremap <silent><Space> za
+        " nnoremap <silent><Space> za
+        " old code works better in terminals, can't capture shift-space
+            nnoremap <silent><space> @=(foldlevel('.')?'za':'l')"<CR>
         nnoremap <silent><S-Space> zA
-        " old code 
-            " nnoremap <silent><space> @=(foldlevel('.')?'za':'l')"<CR>
         nnoremap <silent><leader><S-Space> :ToggleBigFold<CR>
         nnoremap <leader><Space> zx 
         vnoremap <silent><Space> zf
@@ -441,6 +444,10 @@
             nnoremap <leader>prf :Shell python %:p<CR>
         " Run selection to new window
             " vnoremap <leader>pR :Python
+        " Add lint error codes to ignore list on the fly
+            nnoremap <silent><leader>pli :exec 'AddPyLintIgnore ' . expand('<cword>')<CR>
+        " Run lint
+            nnoremap <leader>plr :PyLint<CR>
     " tmux support: disable these keys in vim
         map <C-f>p <Nop>
         map <C-f>n <Nop>
@@ -598,6 +605,25 @@
         endfunction
         command! FollowSymlink call MyFollowSymlink()
         autocmd BufReadPost * call MyFollowSymlink(expand('<afile>'))
+    " Add to pylint ignore list on the go
+        function! AddPyLintIgnore(...)
+            if g:pymode == 1
+                let old = g:pymode_lint_ignore
+                if a:0 == 0
+                    let g:pymode_lint_ignore = ""
+                    echo "PyLint ignore list reset"
+                elseif a:0 > 0
+                    let new = a:1
+                    if strlen(old) == 0
+                        let g:pymode_lint_ignore = new
+                    else
+                        let g:pymode_lint_ignore = old . ',' . new
+                    endif
+                    echo "Added " . new . " to PyLint Ignore list."
+                endif
+            endif
+        endfunction
+        command! -nargs=* AddPyLintIgnore call AddPyLintIgnore(<f-args>)
 
 " ------------------
 " Plugin Options
@@ -676,6 +702,7 @@
         nnoremap <leader>grD :Git push github --delete<space>
         " Merges
         nnoremap <leader>gm :Git merge<space>
+        nnoremap <leader>gmc :Git cherry-pick <cword><CR>
         " Rebase
         nnoremap <leader>gRs :Git rebase -i HEAD~
         nnoremap <leader>gR :Shell git rebase<space>
