@@ -1,13 +1,11 @@
 " VIM Configuration for Brian Clements
-" Version:  1.1.2
-" Date:     2014.04.12-00:21 
+" URL:      github.com/brianclements/vim
+" Version:  1.2.0
+" Date:     2014.04.20-02:03 
 " Changes:  
-"   - there is no git filetype -> gitcommit
-"   - added --force to clearing caches
-"   - disabled some tmux mapping keys
-"   - reinstated old folding code space, works better in terminals
-"   - AddPyLintIgnore() and keybind
-"   - git cherry-pick bind using cword
+" - Fixed spelling highlighting persistence for terminal use.
+" - Moved highlighting functions to custom theme, renamed it "primal"
+" - Fixed color scheme logic to work better in choosing GUI, xterm, and tty
 " ------------------
 
 " ------------------
@@ -89,19 +87,8 @@
         " set undodir=$HOME/.vim/tmp/undo
         set directory=$HOME/.vim/tmp/swap//
         set viewdir=$HOME/.vim/tmp/view
-    " Color Support
-        " Switch colors depending on GUI or in regular xterm. And if supported for
-        " each, syntax is turned on.
-        if has('gui_running')
-            colors tir_black-custom
-        else
-            if &t_Co > 16
-                set t_Co=256
-                colors tir_black-custom
-            else
-                colors asu1dark
-            endif
-        endif
+    " Color Scheme
+        let colorscheme = 'primal'
     " Wordwrap
         set nowrap
         set textwidth=0
@@ -117,43 +104,6 @@
         " Saves manual folds
             au BufWinLeave ?* mkview 1
             au BufWinEnter ?* silent loadview 1
-    " highlighting
-        set cursorline
-        " Default color
-            highlight CursorColumn ctermbg=233 guibg=#0d0f00
-            highlight Cursorline ctermbg=233 guibg=#0d0f00
-        " Change to blues in Instert Mode
-            autocmd InsertEnter * highlight CursorColumn ctermbg=17 guibg=#000321
-            autocmd InsertEnter * highlight Cursorline ctermbg=17 guibg=#000321
-        " Revert Color to default when leaving Insert Mode
-            autocmd InsertLeave * highlight CursorColumn ctermbg=233 guibg=#0d0f00
-            autocmd InsertLeave * highlight Cursorline ctermbg=233 guibg=#0d0f00
-        " highlight the 80th column
-            " In Vim >= 7.3, also highlight columns 120+
-            set colorcolumn=80
-            set nowrap
-            if exists('+colorcolumn')
-                " (I picked 120-320 because you have to provide an upper bound and 320 just covers a
-                " 1080p GVim window in Ubuntu Mono 11 font.)
-                let &colorcolumn="80,".join(range(120,320),",")
-                highlight ColorColumn ctermbg=232 guibg=#0d0d0d
-                set cursorcolumn
-            else
-                "fallback for Vim < v7.3
-                autocmd BufWinEnter * let w:m2=matchadd('ErrorMsg', '\%>80v.\+', -1)
-            endif
-        " folding highlights 94
-            highlight Folded ctermbg=black ctermfg=52 cterm=bold guibg=#000000 guifg=#380C02 gui=bold,italic
-            highlight FoldColumn ctermbg=234 guibg=#262626
-        " for Command-T
-            hi Pmenu ctermfg=blue ctermbg=234 cterm=None guifg=cyan guibg=#121212 gui=None
-            hi PmenuSel ctermfg=232 ctermbg=094 cterm=Bold guifg=black guibg=#cc7000 gui=Bold
-        " Search highlighting
-            hi Search ctermfg=232 ctermbg=094 cterm=None guifg=black guibg=#cc7000 
-        " Visual highlighting
-            hi Visual ctermfg=251 ctermbg=23 guibg=#181c33
-        " Special keys
-            hi SpecialKey ctermfg=232 ctermbg=196 cterm=None guifg=black guibg=red
     " Omnicompletion
         set omnifunc=syntaxcomplete#Complete
     " Misc Options
@@ -222,6 +172,8 @@
             " let &cpo=s:cpo_save
             " unlet s:cpo_save
         set fileencodings=ucs-bom,utf-8,default,latin1
+        " Set gui colors
+        exec "colors " . colorscheme
         set guifont=Ubuntu\ Mono\ for\ Powerline\ 12
         " Other font options include:
         "   Default: Ubuntu\ Mono\ for\ Powerline\ 12
@@ -251,6 +203,17 @@
             set nomousehide " default
             autocmd InsertEnter * set mousehide
             autocmd InsertLeave * set nomousehide
+    else " some things for terminal only
+        " Spelling highlight Compatibility
+        hi clear SpellBad
+        hi SpellBad cterm=bold,italic ctermfg=red
+        " Set xterm and last resort tty colors
+        if &t_Co > 16
+            set t_Co=256
+            exec "colors " . colorscheme
+        else
+            colors miro8
+        endif
     endif
 
 " ------------------
