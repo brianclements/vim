@@ -1,11 +1,13 @@
 " VIM Configuration for Brian Clements
 " URL:      github.com/brianclements/vim
-" Version:  1.2.0
-" Date:     2014.04.20-02:03 
+" Version:  1.2.1
+" Date:     2014.05.24-17:30 
 " Changes:  
-" - Fixed spelling highlighting persistence for terminal use.
-" - Moved highlighting functions to custom theme, renamed it "primal"
-" - Fixed color scheme logic to work better in choosing GUI, xterm, and tty
+" - Add git remote set-url keybind
+" - Add regular write-all command
+" - Better method for ^ and $ shortcut
+" - Add dosini ft shortcut
+" - Reconfigured vim-bufferline view
 " ------------------
 
 " ------------------
@@ -235,16 +237,17 @@
         nnoremap <leader>Q :qa!
         nnoremap <silent> <leader>w :w<CR>
         nnoremap <silent> <leader>W :w!<CR>
-        nnoremap <silent> <leader>Wa :wa!<CR>
+        nnoremap <silent> <leader>ww :wa<CR>
+        nnoremap <silent> <leader>WW :wa!<CR>
         nnoremap <leader>wa :saveas<space>
         nnoremap <leader>e :e<space>
         nnoremap <C-w>o :only
         nnoremap <C-w>O :only
         nnoremap <C-w><C-o> :only
         nnoremap <CR> o<Esc>
-        nnoremap H I<ESC>
+        nnoremap H ^
         vnoremap H ^
-        nnoremap L A<ESC>
+        nnoremap L $
         vnoremap L $
     " File management
         " Delete current file
@@ -373,6 +376,7 @@
             nnoremap <silent><leader>sfh :setlocal filetype=htmldjango<CR>
             nnoremap <silent><leader>sfl :setlocal filetype=lilypond<CR>
             nnoremap <silent><leader>sfg :setlocal filetype=gitcommit<CR>
+            nnoremap <silent><leader>sfi :setlocal filetype=dosini<CR>
         " Various ways to run external commands
             " Using Shell function, displays in vim
                 nnoremap <leader>sr :Shell<space>
@@ -659,6 +663,7 @@
         nnoremap <leader>gr :Shell git remote<space>
         nnoremap <leader>gra :Git remote add github git@github.com:brianclements/
         nnoremap <leader>grc :Git remote prune<space>
+        nnoremap <leader>grR :Git remote set-url github git@github.com:
         nnoremap <leader>gru :Shell git pull<space>
         nnoremap <leader>grP :Git push -u --tags<space>
         nnoremap <leader>grp :Git push<space>
@@ -762,7 +767,7 @@
         let g:bufferline_active_buffer_left = '('
         let g:bufferline_active_buffer_right = ')'
         let g:bufferline_rotate = 2
-        let g:bufferline_fname_mod = ':t'
+        let g:bufferline_fname_mod = ':~:.:gs?/mnt/local/vhome/brian/?~/?'
     " Command-T
         nnoremap <leader>f :CommandT<CR>
         nnoremap <silent> <leader>ff :CommandTFlush<CR>
