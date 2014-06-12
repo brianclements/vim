@@ -1,13 +1,9 @@
 " VIM Configuration for Brian Clements
 " URL:      github.com/brianclements/vim
-" Version:  1.2.1
-" Date:     2014.05.24-17:30 
+" Version:  1.2.2
+" Date:     2014.06.12-12:24 
 " Changes:  
-" - Add git remote set-url keybind
-" - Add regular write-all command
-" - Better method for ^ and $ shortcut
-" - Add dosini ft shortcut
-" - Reconfigured vim-bufferline view
+" - Added vim-yaml plugin
 " ------------------
 
 " ------------------
@@ -51,6 +47,7 @@
             Bundle 'lfairy/lilyvim'
             Bundle 'jmcantrell/vim-virtualenv'
             Bundle 'christoomey/vim-tmux-navigator'
+            Bundle 'stephpy/vim-yaml'
         syntax on
         filetype plugin indent on
     " Default directory
