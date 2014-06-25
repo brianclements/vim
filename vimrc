@@ -1,9 +1,17 @@
 " VIM Configuration for Brian Clements
 " URL:      github.com/brianclements/vim
-" Version:  1.2.2
-" Date:     2014.06.12-12:24 
+" Version:  1.3.0
+" Date:     2014.06.25-01:01 
 " Changes:  
-" - Added vim-yaml plugin
+" - added SearchTasks plugin
+" - re-apply indent for python files; something turns it off
+" - Added generic python run keybind
+" - Removed *.txt from autocmd textfile formating. It turned spelling on for
+"   help files; very annoying.
+" - decrease insert mode exit/enter delay
+" - Powerline custom config support
+" - minor layout refactoring
+" - NERDTreeToggleCWD()
 " ------------------
 
 " ------------------
@@ -48,6 +56,7 @@
             Bundle 'jmcantrell/vim-virtualenv'
             Bundle 'christoomey/vim-tmux-navigator'
             Bundle 'stephpy/vim-yaml'
+            Bundle 'gilsondev/searchtasks.vim'
         syntax on
         filetype plugin indent on
     " Default directory
@@ -57,16 +66,16 @@
 " General Vim Settings
 " ------------------
     " Put these in an autocmd group, so that we can delete them easily.
-    augroup vimrcEx
-        " au!
-        " When editing a file, always jump to the last known cursor position.
-        " Don't do it when the position is invalid or when inside an event handler
-        " (happens when dropping a file on gvim).
-        autocmd BufReadPost *
-            \ if line("'\"") > 0 && line("'\"") <= line("$") |
-            \   exe "normal! g`\"" |
-            \ endif
-    augroup END
+        augroup vimrcEx
+            " au!
+            " When editing a file, always jump to the last known cursor position.
+            " Don't do it when the position is invalid or when inside an event handler
+            " (happens when dropping a file on gvim).
+            autocmd BufReadPost *
+                \ if line("'\"") > 0 && line("'\"") <= line("$") |
+                \   exe "normal! g`\"" |
+                \ endif
+        augroup END
     " Indentation
         set autoindent
         set copyindent
@@ -156,6 +165,13 @@
             " au CursorHoldI * stopinsert
             " au InsertEnter * let updaterestore=&updatetime | set updatetime=2000
             " au InsertLeave * let &updatetime=updaterestore
+        " Enter/Exit insert mode delay
+        set ttimeoutlen=10
+        augroup FastEscape
+            autocmd!
+            au InsertEnter * set timeoutlen=400
+            au InsertLeave * set timeoutlen=1000
+        augroup END
 
 " ------------------
 " Gvim Settings
@@ -403,9 +419,11 @@
             nnoremap <leader>ptm :!pythoscope %:p:.
             nnoremap <leader>ptr :Shell python setup.py test<CR>
         " Run selection
-            vnoremap <leader>pr :w !python<CR>
+            vnoremap <leader>pR :w !python<CR>
         " Run current file
-            nnoremap <leader>prf :Shell python %:p<CR>
+            nnoremap <leader>pRf :Shell python %:p<CR>
+        " Run arbitrary command
+            nnoremap <leader>pr :!python 
         " Run selection to new window
             " vnoremap <leader>pR :Python
         " Add lint error codes to ignore list on the fly
@@ -588,6 +606,50 @@
             endif
         endfunction
         command! -nargs=* AddPyLintIgnore call AddPyLintIgnore(<f-args>)
+    " Better NERDTree toggle
+        " inspiration from: http://superuser.com/questions/195022/vim-how-to-synchronize-nerdtree-with-current-opened-tab-file-path
+        function! NERDTreeToggleCWD()
+            " Check if NERDTree is open
+            let ntree_buf = winbufnr(1)
+            let ntree_status = 0
+            if getbufvar(ntree_buf, 'NERDTreeType') ==# 'primary'
+                let ntree_status = 1
+            endif
+
+            " set defaults
+            let this_file = bufname('%')
+            if !exists ("g:ntree_prev_win")
+                let g:ntree_prev_win = this_file
+            endif
+            let curwin = winnr()
+
+            if ntree_status == 0
+                " Remember the file that's open
+                let g:ntree_prev_win = this_file
+                " Window numbers are changing!
+                NERDTreeFind
+            else
+                " Move cursor to prev window if in NERDTree window
+                if this_file =~# 'NERD_tree_' 
+                    wincmd p
+                    let this_file = bufname('%')
+                    let curwin = winnr()
+                    exec 'cd %:p:h'
+                endif
+                " New window, refresh NERDTree
+                if this_file != g:ntree_prev_win
+                    NERDTreeFind
+                    wincmd p
+                else
+                    " Same window, toggle NERDTree
+                    let curwin = curwin - 1
+                    NERDTreeToggle
+                    exec curwin . ' wincmd w'
+                endif
+                let g:ntree_prev_win = bufname('%')
+            endif
+        endfunction
+        command! NERDTreeToggleCWD call NERDTreeToggleCWD()
 
 " ------------------
 " Plugin Options
@@ -688,8 +750,8 @@
         nnoremap <Leader>gwq :Gwq<CR>
         nnoremap <leader>gV :!gitg<CR>
     " NERDTree
-        nnoremap <silent> <leader>t :NERDTreeToggle<cr>
-        "autocmd vimenter * if !argc() | :NERDTreeToggle | endif
+        nnoremap <silent> <leader>t :NERDTreeToggleCWD<cr>
+        " autocmd vimenter * if !argc() | :NERDTreeToggle | endif
         autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && 
             \ b:NERDTreeType == "primary") | q | endif
         let NERDTreeIgnore=['\.pyc$', '\~$']
@@ -698,6 +760,7 @@
         let NERDCompactSexyComs=1
     " Powerline
         "set guifont=DejaVu\ Sans\ Mono\ for\ Powerline\ 9
+        let g:powerline_config_path = $HOME . '/.powerline'
         let g:Powerline_symbols = 'fancy'
         set laststatus=2
     " Python-mode
@@ -795,6 +858,9 @@
         nnoremap <leader>pva :VirtualEnvActivate<space>
         nnoremap <leader>pvd :VirtualEnvDeactivate<CR>
         nnoremap <leader>pvi :Shell virtualenv ../venv/
+    " SearchTasks
+      let g:searchtasks_list=["TODO", "FIXME", "XXX", "HACK", "BUG"]
+      nnoremap <leader>us :SearchTasks . 
 
 " ------------------
 " Filetype Specific Options
@@ -803,7 +869,7 @@
         autocmd BufEnter *.*
            \ exec 'Rooter'
     " Markdown (default for all text files)
-        autocmd BufRead,BufNewFile *.txt,*.text,*.md,*.markdown
+        autocmd BufRead,BufNewFile *.text,*.md,*.markdown
             \ setlocal spell |
             \ setlocal textwidth=80 |
             \ setlocal filetype=markdown |
@@ -878,6 +944,7 @@
     " Python
         autocmd BufRead,BufNewFile *.py
             \ set omnifunc=pythoncomplete#Complete |
+            \ set foldmethod=indent |
             \ set foldnestmax=2 |
             \ set foldlevel=0 |
             \ set foldlevelstart=2
