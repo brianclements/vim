@@ -1,17 +1,20 @@
 " VIM Configuration for Brian Clements
 " URL:      github.com/brianclements/vim
-" Version:  1.3.0
-" Date:     2014.06.25-01:01 
+" Version:  1.3.1
+" Date:     2014.06.30-11:06 
 " Changes:  
-" - added SearchTasks plugin
-" - re-apply indent for python files; something turns it off
-" - Added generic python run keybind
-" - Removed *.txt from autocmd textfile formating. It turned spelling on for
-"   help files; very annoying.
-" - decrease insert mode exit/enter delay
-" - Powerline custom config support
-" - minor layout refactoring
-" - NERDTreeToggleCWD()
+" - Quick foldlevel key shortcut
+" - Automatically open NERDTree when opening vimrc or dotfiles
+" - Turn off pymode-virtualenv, already too many things managing it
+" - Universal foldmethod re-applied
+" - always open on $PWD
+" - Virtualenv: look to WORKON_HOME for envs and inits
+" - Fixed NERDTreeToggleCWD()
+"   - NERDTreeFind => NERDTreeCWD: was doing stupid stuff to my windows
+"   - Fixed stuck-on-NERDTree window bug
+" - Added vimhelp ft quick keybind
+" - Added another markdown suffix
+" - git status puts cursor back to window. I check status more then I commit.
 " ------------------
 
 " ------------------
@@ -60,7 +63,7 @@
         syntax on
         filetype plugin indent on
     " Default directory
-        cd $HOME/dev
+        cd $PWD
 
 " ------------------
 " General Vim Settings
@@ -237,8 +240,8 @@
     " Change the mapleader from \ to ;
         let mapleader=";"
     " Quick edit and reload of .vimrc
-        nnoremap <silent> <leader>ev :e $HOME/.vim/vimrc<CR>
-        nnoremap <silent> <leader>ed :e $DOTFILES/README.md<CR>
+        nnoremap <silent> <leader>ev :e $HOME/.vim/vimrc <bar> NERDTreeFind<CR>
+        nnoremap <silent> <leader>ed :e $DOTFILES/README.md <bar> NERDTreeFind<CR>
         nnoremap <silent> <leader>Sv :so $MYVIMRC<CR>
         nnoremap <silent> <leader>Sf :so %<CR>:echo 'loaded file: ' . @%<CR>
         nnoremap <silent> <leader>wSv :w<CR>:so $MYVIMRC<CR>
@@ -390,6 +393,7 @@
             nnoremap <silent><leader>sfl :setlocal filetype=lilypond<CR>
             nnoremap <silent><leader>sfg :setlocal filetype=gitcommit<CR>
             nnoremap <silent><leader>sfi :setlocal filetype=dosini<CR>
+            nnoremap <silent><leader>sfv :setlocal filetype=help<CR>
         " Various ways to run external commands
             " Using Shell function, displays in vim
                 nnoremap <leader>sr :Shell<space>
@@ -433,6 +437,9 @@
     " tmux support: disable these keys in vim
         map <C-f>p <Nop>
         map <C-f>n <Nop>
+    " Universal fold level
+      " because many times, it just doesn't get activated
+      nnoremap <silent> <leader>vf :set foldmethod=indent<CR>
 
 " ------------------
 " Functions & Tools
@@ -608,6 +615,9 @@
         command! -nargs=* AddPyLintIgnore call AddPyLintIgnore(<f-args>)
     " Better NERDTree toggle
         " inspiration from: http://superuser.com/questions/195022/vim-how-to-synchronize-nerdtree-with-current-opened-tab-file-path
+        " If closed -> NerdTreeFind
+        " If cursor in newfile -> NerdTreeFind
+        " If cursor in samefile -> NerdTreeTogle
         function! NERDTreeToggleCWD()
             " Check if NERDTree is open
             let ntree_buf = winbufnr(1)
@@ -617,36 +627,41 @@
             endif
 
             " set defaults
-            let this_file = bufname('%')
-            if !exists ("g:ntree_prev_win")
-                let g:ntree_prev_win = this_file
+            if !exists('g:ntree_curwin')
+                let g:ntree_curwin = winnr()
             endif
-            let curwin = winnr()
+            let g:ntree_this_buf = bufname('%')
+            if !exists ('g:ntree_prev_buf')
+                let g:ntree_prev_buf = g:ntree_this_buf
+            endif
 
             if ntree_status == 0
+                let g:ntree_curwin = winnr()
                 " Remember the file that's open
-                let g:ntree_prev_win = this_file
+                let g:ntree_prev_buf = g:ntree_this_buf
                 " Window numbers are changing!
-                NERDTreeFind
+                let g:ntree_curwin = g:ntree_curwin + 1
+                NERDTreeCWD
+                let g:ntree_this_buf = bufname('%')
             else
                 " Move cursor to prev window if in NERDTree window
-                if this_file =~# 'NERD_tree_' 
-                    wincmd p
-                    let this_file = bufname('%')
-                    let curwin = winnr()
+                if g:ntree_this_buf =~# 'NERD_tree' 
+                    exec g:ntree_curwin . ' wincmd w'
+                    let g:ntree_this_buf = bufname('%')
+                    let g:ntree_curwin = winnr()
                     exec 'cd %:p:h'
                 endif
                 " New window, refresh NERDTree
-                if this_file != g:ntree_prev_win
-                    NERDTreeFind
+                if g:ntree_this_buf != g:ntree_prev_buf
+                    NERDTreeCWD
                     wincmd p
+                    let g:ntree_prev_buf = g:ntree_this_buf
                 else
                     " Same window, toggle NERDTree
-                    let curwin = curwin - 1
+                    let g:ntree_curwin = g:ntree_curwin - 1
                     NERDTreeToggle
-                    exec curwin . ' wincmd w'
+                    exec g:ntree_curwin . ' wincmd w'
                 endif
-                let g:ntree_prev_win = bufname('%')
             endif
         endfunction
         command! NERDTreeToggleCWD call NERDTreeToggleCWD()
@@ -709,7 +724,7 @@
         nnoremap <leader>gbd :Shell git branch -d<space>
         nnoremap <leader>gbD :Shell git branch -D<space>
         " Viewing status
-        nnoremap <Leader>g? :Gstatus<CR>:SmartResizeWindow 30<CR>:go<CR>
+        nnoremap <Leader>g? :Gstatus<CR>:SmartResizeWindow 30<CR>:go<CR>:wincmd p<CR>
         " Logs
         nnoremap <Leader>gl :Shell git hist-blk<CR>
         nnoremap <Leader>gL :Shell git hist2-blk<CR>
@@ -804,6 +819,8 @@
             let g:pymode_syntax_all = 1
             let g:pymode_syntax_indent_errors = g:pymode_syntax_all
             let g:pymode_syntax_space_errors = g:pymode_syntax_all
+        " Disable virtualenv-support for pymode
+            let g:pymode_virtualenv = 0
         " Don't autofold code (built-in VIM folding does it better)
             let g:pymode_folding = 0
         " Change add some rope mapping
@@ -851,13 +868,15 @@
             \ 'AUTHORS.MD', 'Rakefile', 'python', ]
         " not working
         " nnoremap <silent> <leader>scd <Plug>RooterChangeToRootDirectory
-    " vim-virtualenv
-        let g:pymode_virtualenv = 1
+    " vim-virtualenv 
+        " My main set of virtualenvs
+        let $WORKON_HOME = '~/.virtualenvs'
+        " Project specific virtualenvs
         let g:virtualenv_directory = '../venv'
         nnoremap <leader>pv? :VirtualEnvList<CR>
         nnoremap <leader>pva :VirtualEnvActivate<space>
         nnoremap <leader>pvd :VirtualEnvDeactivate<CR>
-        nnoremap <leader>pvi :Shell virtualenv ../venv/
+        nnoremap <leader>pvi :Shell virtualenv $WORKON_HOME/
     " SearchTasks
       let g:searchtasks_list=["TODO", "FIXME", "XXX", "HACK", "BUG"]
       nnoremap <leader>us :SearchTasks . 
@@ -867,9 +886,10 @@
 " ------------------
     " All files
         autocmd BufEnter *.*
-           \ exec 'Rooter'
+            \ exec 'Rooter' |
+            \ set foldmethod=indent
     " Markdown (default for all text files)
-        autocmd BufRead,BufNewFile *.text,*.md,*.markdown
+        autocmd BufRead,BufNewFile *.text,*.md,*.markdown,*.mkd
             \ setlocal spell |
             \ setlocal textwidth=80 |
             \ setlocal filetype=markdown |
@@ -944,7 +964,6 @@
     " Python
         autocmd BufRead,BufNewFile *.py
             \ set omnifunc=pythoncomplete#Complete |
-            \ set foldmethod=indent |
             \ set foldnestmax=2 |
             \ set foldlevel=0 |
             \ set foldlevelstart=2
