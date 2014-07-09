@@ -52,7 +52,7 @@ if version >= 700 " Vim 7.x specific colors
     " Revert Color to default when leaving Insert Mode
         autocmd InsertLeave * hi Cursorline guibg=#0d0f00 gui=none ctermbg=233 cterm=none
         autocmd InsertLeave * hi CursorColumn guibg=#0d0f00 gui=none ctermbg=233 cterm=none
-    hi MatchParen guifg=#f6f3e8 guibg=#857b6f gui=bold ctermfg=white ctermbg=darkgray 
+    hi MatchParen guifg=#a70400 guibg=#000000 gui=bold ctermfg=Red ctermbg=black cterm=Bold
         " for Command-T
             hi Pmenu guifg=cyan guibg=#121212 gui=None ctermfg=blue ctermbg=234 cterm=None 
             hi PmenuSel guifg=black guibg=#cc7000 gui=Bold ctermfg=232 ctermbg=094 cterm=Bold 
