@@ -1,20 +1,12 @@
 " VIM Configuration for Brian Clements
 " URL:      github.com/brianclements/vim
-" Version:  1.3.1
-" Date:     2014.06.30-11:06 
+" Version:  1.3.1-4
+" Date:     2014.07.06-18:39 
 " Changes:  
-" - Quick foldlevel key shortcut
-" - Automatically open NERDTree when opening vimrc or dotfiles
-" - Turn off pymode-virtualenv, already too many things managing it
-" - Universal foldmethod re-applied
-" - always open on $PWD
-" - Virtualenv: look to WORKON_HOME for envs and inits
-" - Fixed NERDTreeToggleCWD()
-"   - NERDTreeFind => NERDTreeCWD: was doing stupid stuff to my windows
-"   - Fixed stuck-on-NERDTree window bug
-" - Added vimhelp ft quick keybind
-" - Added another markdown suffix
-" - git status puts cursor back to window. I check status more then I commit.
+" - NERDTreeToggleCWD() => NERDTreeRefreshFind() with minor fixes
+" - updated virtualenv commands for python3
+" - pylint ignore list reset command: built it into program, never keybinded it.
+" - converted unittesting tools to python3
 " ------------------
 
 " ------------------
@@ -421,19 +413,21 @@
         " Unit testing
             nnoremap <leader>pti :!pythoscope --init<CR>
             nnoremap <leader>ptm :!pythoscope %:p:.
-            nnoremap <leader>ptr :Shell python setup.py test<CR>
+            nnoremap <leader>ptr :Shell python3 setup.py test<CR>
         " Run selection
-            vnoremap <leader>pR :w !python<CR>
+            vnoremap <leader>pR :w !python3<CR>
         " Run current file
-            nnoremap <leader>pRf :Shell python %:p<CR>
+            nnoremap <leader>pRf :Shell python3 %:p<CR>
         " Run arbitrary command
-            nnoremap <leader>pr :!python 
+            nnoremap <leader>pr :!python3
         " Run selection to new window
-            " vnoremap <leader>pR :Python
+            " vnoremap <leader>pR :Python3
         " Add lint error codes to ignore list on the fly
             nnoremap <silent><leader>pli :exec 'AddPyLintIgnore ' . expand('<cword>')<CR>
         " Run lint
-            nnoremap <leader>plr :PyLint<CR>
+            nnoremap <leader>pls :PyLint<CR>
+        " Clear ignore list
+            nnoremap <silent><leader>plc :AddPyLintIgnore<CR>
     " tmux support: disable these keys in vim
         map <C-f>p <Nop>
         map <C-f>n <Nop>
@@ -615,10 +609,10 @@
         command! -nargs=* AddPyLintIgnore call AddPyLintIgnore(<f-args>)
     " Better NERDTree toggle
         " inspiration from: http://superuser.com/questions/195022/vim-how-to-synchronize-nerdtree-with-current-opened-tab-file-path
-        " If closed -> NerdTreeFind
-        " If cursor in newfile -> NerdTreeFind
-        " If cursor in samefile -> NerdTreeTogle
-        function! NERDTreeToggleCWD()
+        " If closed -> NerdTree
+        " If cursor in newfile -> NerdTree
+        " If cursor in samefile -> NerdTreeToggle
+        function! NERDTreeRefreshFind()
             " Check if NERDTree is open
             let ntree_buf = winbufnr(1)
             let ntree_status = 0
@@ -627,44 +621,46 @@
             endif
 
             " set defaults
-            if !exists('g:ntree_curwin')
-                let g:ntree_curwin = winnr()
-            endif
-            let g:ntree_this_buf = bufname('%')
+            let g:ntree_curwin = winnr()
+            let g:ntree_this_buf = expand('%:p:h')
             if !exists ('g:ntree_prev_buf')
                 let g:ntree_prev_buf = g:ntree_this_buf
             endif
 
+            " Move cursor to prev window if in NERDTree window
+            if g:ntree_this_buf =~# 'NERD_tree' 
+                exec g:ntree_curwin . ' wincmd w'
+                let g:ntree_this_buf = expand('%:p:h')
+                let g:ntree_curwin = winnr()
+                let g:ntree_prev_buf = g:ntree_this_buf
+            endif
+
+            exec 'cd %:p:h'
+
+            " Closed, open NERDTree
             if ntree_status == 0
                 let g:ntree_curwin = winnr()
                 " Remember the file that's open
                 let g:ntree_prev_buf = g:ntree_this_buf
                 " Window numbers are changing!
                 let g:ntree_curwin = g:ntree_curwin + 1
-                NERDTreeCWD
-                let g:ntree_this_buf = bufname('%')
+                NERDTree
             else
-                " Move cursor to prev window if in NERDTree window
-                if g:ntree_this_buf =~# 'NERD_tree' 
-                    exec g:ntree_curwin . ' wincmd w'
-                    let g:ntree_this_buf = bufname('%')
-                    let g:ntree_curwin = winnr()
-                    exec 'cd %:p:h'
-                endif
                 " New window, refresh NERDTree
                 if g:ntree_this_buf != g:ntree_prev_buf
-                    NERDTreeCWD
+                    NERDTreeFind
                     wincmd p
                     let g:ntree_prev_buf = g:ntree_this_buf
                 else
-                    " Same window, toggle NERDTree
+                    " Same window, close NERDTree
                     let g:ntree_curwin = g:ntree_curwin - 1
-                    NERDTreeToggle
+                    NERDTreeClose
                     exec g:ntree_curwin . ' wincmd w'
+                    let g:ntree_prev_buf = expand('%:p:h')
                 endif
             endif
         endfunction
-        command! NERDTreeToggleCWD call NERDTreeToggleCWD()
+        command! NERDTreeRefreshFind call NERDTreeRefreshFind()
 
 " ------------------
 " Plugin Options
@@ -765,7 +761,7 @@
         nnoremap <Leader>gwq :Gwq<CR>
         nnoremap <leader>gV :!gitg<CR>
     " NERDTree
-        nnoremap <silent> <leader>t :NERDTreeToggleCWD<cr>
+        nnoremap <silent> <leader>t :NERDTreeRefreshFind<cr>
         " autocmd vimenter * if !argc() | :NERDTreeToggle | endif
         autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && 
             \ b:NERDTreeType == "primary") | q | endif
@@ -876,7 +872,7 @@
         nnoremap <leader>pv? :VirtualEnvList<CR>
         nnoremap <leader>pva :VirtualEnvActivate<space>
         nnoremap <leader>pvd :VirtualEnvDeactivate<CR>
-        nnoremap <leader>pvi :Shell virtualenv $WORKON_HOME/
+        nnoremap <leader>pvi :Shell virtualenv --python=/usr/bin/python3 $WORKON_HOME/
     " SearchTasks
       let g:searchtasks_list=["TODO", "FIXME", "XXX", "HACK", "BUG"]
       nnoremap <leader>us :SearchTasks . 
