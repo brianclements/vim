@@ -1,12 +1,11 @@
 " VIM Configuration for Brian Clements
 " URL:      github.com/brianclements/vim
-" Version:  1.3.1-4
-" Date:     2014.07.06-18:39 
+" Version:  1.3.3
+" Date:     2014.07.30-23:32 
 " Changes:  
-" - NERDTreeToggleCWD() => NERDTreeRefreshFind() with minor fixes
-" - updated virtualenv commands for python3
-" - pylint ignore list reset command: built it into program, never keybinded it.
-" - converted unittesting tools to python3
+" - Set default pylint ignore to E501
+" - Popwindow settings
+" - insert mode navigation tweaks
 " ------------------
 
 " ------------------
@@ -279,10 +278,9 @@
         " Enable insert mode navigation to mimic Xterm functions
             inoremap <C-j> <Down>
             inoremap <C-k> <Up>
-            inoremap <C-b> <Left>
-            inoremap <C-f> <Right>
+            inoremap <C-h> <Left>
+            inoremap <C-l> <Right>
             inoremap <C-d> <Del>
-            inoremap <C-h> <BS>
             inoremap <C-a> <C-o>I
             inoremap <C-e> <C-o>A
             inoremap <S-Space> <c-o><C-e>
@@ -612,7 +610,7 @@
         " If closed -> NerdTree
         " If cursor in newfile -> NerdTree
         " If cursor in samefile -> NerdTreeToggle
-        function! NERDTreeRefreshFind()
+        function! NERDTreeFindToggle()
             " Check if NERDTree is open
             let ntree_buf = winbufnr(1)
             let ntree_status = 0
@@ -660,7 +658,7 @@
                 endif
             endif
         endfunction
-        command! NERDTreeRefreshFind call NERDTreeRefreshFind()
+        command! NERDTreeFindToggle call NERDTreeFindToggle()
 
 " ------------------
 " Plugin Options
@@ -761,7 +759,7 @@
         nnoremap <Leader>gwq :Gwq<CR>
         nnoremap <leader>gV :!gitg<CR>
     " NERDTree
-        nnoremap <silent> <leader>t :NERDTreeRefreshFind<cr>
+        nnoremap <silent> <leader>t :NERDTreeFindToggle<cr>
         " autocmd vimenter * if !argc() | :NERDTreeToggle | endif
         autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && 
             \ b:NERDTreeType == "primary") | q | endif
@@ -802,7 +800,7 @@
             let g:pymode_lint = 1
             let g:pymode_lint_checker = "pyflakes,pep8"
             " Ignore errors and warnings
-                " let g:pymode_lint_ignore = 'E501,W002'
+                let g:pymode_lint_ignore = 'E501'
             " Auto check on save
                 let g:pymode_lint_write = 1
             " Auto open cwindow if errors found
@@ -874,8 +872,10 @@
         nnoremap <leader>pvd :VirtualEnvDeactivate<CR>
         nnoremap <leader>pvi :Shell virtualenv --python=/usr/bin/python3 $WORKON_HOME/
     " SearchTasks
-      let g:searchtasks_list=["TODO", "FIXME", "XXX", "HACK", "BUG"]
-      nnoremap <leader>us :SearchTasks . 
+        let g:searchtasks_list=["TODO", "FIXME", "XXX", "HACK", "BUG"]
+        nnoremap <leader>us :SearchTasks . 
+    " Popwindow
+        let g:popwindow_close_types = ['temp', 'help', 'fugitive', 'quickfix']
 
 " ------------------
 " Filetype Specific Options
