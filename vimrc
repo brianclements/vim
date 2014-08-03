@@ -1,11 +1,11 @@
 " VIM Configuration for Brian Clements
 " URL:      github.com/brianclements/vim
-" Version:  1.3.3
-" Date:     2014.07.30-23:32 
+" Version:  1.3.4
+" Date:     2014.08.03-00:32 
 " Changes:  
-" - Set default pylint ignore to E501
-" - Popwindow settings
-" - insert mode navigation tweaks
+" - vim diff keybinds
+" - removed setfoldmethod on every buffer change, screws with diff mode.
+" - updated popwindow close types
 " ------------------
 
 " ------------------
@@ -354,7 +354,7 @@
     " Diff commands
         nnoremap <silent> <leader>du :diffupdate<CR>
         nnoremap <silent> <leader>dw :diffthis<CR>
-        nnoremap <silent> <leader>D :diffoff<CR>
+        nnoremap <silent> <leader>do :diffoff<CR>
     " Buffer Navigation
         nnoremap <leader>bl :buffers<CR>:buffer<Space>
         nnoremap <leader>bg <C-^>
@@ -875,15 +875,16 @@
         let g:searchtasks_list=["TODO", "FIXME", "XXX", "HACK", "BUG"]
         nnoremap <leader>us :SearchTasks . 
     " Popwindow
-        let g:popwindow_close_types = ['temp', 'help', 'fugitive', 'quickfix']
+        let g:popwindow_close_types = [
+            \'fugitive-diff', 'temp', 'permissive_temp',
+            \'help', 'fugitive', 'quickfix']
 
 " ------------------
 " Filetype Specific Options
 " ------------------
     " All files
         autocmd BufEnter *.*
-            \ exec 'Rooter' |
-            \ set foldmethod=indent
+            \ exec 'Rooter'
     " Markdown (default for all text files)
         autocmd BufRead,BufNewFile *.text,*.md,*.markdown,*.mkd
             \ setlocal spell |
