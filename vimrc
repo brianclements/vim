@@ -1,11 +1,11 @@
 " VIM Configuration for Brian Clements
 " URL:      github.com/brianclements/vim
-" Version:  1.3.4
-" Date:     2014.08.03-00:32 
+" Version:  1.3.5
+" Date:     2014.09.09-02:25 
 " Changes:  
 " - vim diff keybinds
 " - removed setfoldmethod on every buffer change, screws with diff mode.
-" - updated popwindow close types
+" - updated/re-ordered popwindow close types
 " ------------------
 
 " ------------------
@@ -876,8 +876,8 @@
         nnoremap <leader>us :SearchTasks . 
     " Popwindow
         let g:popwindow_close_types = [
-            \'fugitive-diff', 'temp', 'permissive_temp',
-            \'help', 'fugitive', 'quickfix']
+            \'fugitive-diff', 'help', 'permissive_temp', 'fugitive', 'temp',
+            \'quickfix']
 
 " ------------------
 " Filetype Specific Options
