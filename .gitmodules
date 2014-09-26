@@ -78,3 +78,6 @@
 [submodule "bundle/lilyvim"]
 	path = bundle/lilyvim
 	url = https://github.com/lfairy/lilyvim
+[submodule "bundle/vim-tmux-navigator"]
+	path = bundle/vim-tmux-navigator
+	url = http://github.com/christoomey/vim-tmux-navigator.git
