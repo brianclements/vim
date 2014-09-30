@@ -1,11 +1,9 @@
 " VIM Configuration for Brian Clements
 " URL:      github.com/brianclements/vim
-" Version:  1.3.5
-" Date:     2014.09.09-02:25 
+" Version:  1.3.6
+" Date:     2014.09.30-12:22 
 " Changes:  
-" - vim diff keybinds
-" - removed setfoldmethod on every buffer change, screws with diff mode.
-" - updated/re-ordered popwindow close types
+" - changed git pull/push keybinds to be more syntactically accurate.
 " ------------------
 
 " ------------------
@@ -54,7 +52,9 @@
         syntax on
         filetype plugin indent on
     " Default directory
-        cd $PWD
+        if !exists("$PWD")
+            cd $PWD
+        endif
 
 " ------------------
 " General Vim Settings
@@ -732,10 +732,10 @@
         nnoremap <leader>gra :Git remote add github git@github.com:brianclements/
         nnoremap <leader>grc :Git remote prune<space>
         nnoremap <leader>grR :Git remote set-url github git@github.com:
-        nnoremap <leader>gru :Shell git pull<space>
-        nnoremap <leader>grP :Git push -u --tags<space>
-        nnoremap <leader>grp :Git push<space>
-        nnoremap <leader>grD :Git push github --delete<space>
+        nnoremap <leader>gu :Shell git pull<space>
+        nnoremap <leader>gP :Git push -u --tags<space>
+        nnoremap <leader>gp :Git push<space>
+        nnoremap <leader>gpD :Git push github --delete<space>
         " Merges
         nnoremap <leader>gm :Git merge<space>
         nnoremap <leader>gmc :Git cherry-pick <cword><CR>
