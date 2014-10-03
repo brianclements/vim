@@ -12,7 +12,7 @@ endif
 let colors_name = "primal"
 
 " General colors
-hi Normal guifg=#f6f3e8 guibg=black ctermfg=white ctermbg=0
+hi Normal guifg=#D9D9D9 guibg=black ctermfg=253 ctermbg=0
 hi NonText guifg=#070707 guibg=black ctermfg=232 ctermbg=0
 
 hi Cursor guifg=black guibg=white ctermfg=0 ctermbg=15
@@ -22,23 +22,26 @@ hi VertSplit guifg=#202020 guibg=#202020 ctermfg=235 ctermbg=235
 hi StatusLine guifg=#CCCCCC guibg=#202020 gui=italic ctermfg=235 ctermbg=254
 hi StatusLineNC guifg=black guibg=#202020 ctermfg=0 ctermbg=235
 
-" folding highlights
-    highlight Folded guifg=#380C02 guibg=#000000 gui=bold,italic ctermfg=52 ctermbg=black cterm=bold 
-    highlight FoldColumn guibg=#262626 ctermbg=234
 hi Title guifg=#f6f3e8 gui=bold ctermfg=187 cterm=bold
+hi WildMenu guifg=black guibg=#cae682 ctermfg=0 ctermbg=195
+hi ModeMsg guifg=black guibg=#C6C5FE gui=bold ctermfg=0 ctermbg=189 cterm=bold
+hi MatchParen guifg=#a70400 guibg=#000000 gui=bold ctermfg=Red ctermbg=black cterm=Bold
+
+" folding highlights
+highlight Folded guifg=#380C02 guibg=#000000 gui=bold,italic ctermfg=52 ctermbg=black cterm=bold 
+highlight Folded guifg=#680400 guibg=#0a0a0a gui=bold,italic ctermfg=52 ctermbg=232 cterm=bold 
+highlight FoldColumn guibg=#262626 ctermbg=234
+
 " Visual highlighting
-    hi Visual guibg=#181c33 ctermfg=251 ctermbg=23
+hi Visual guibg=#181c33 ctermfg=254 ctermbg=24
 
 " Special keys
-    hi SpecialKey guifg=black guibg=red ctermfg=232 ctermbg=196 cterm=None
+hi SpecialKey guifg=black guibg=red ctermfg=232 ctermbg=196 cterm=None
 
-hi WildMenu guifg=black guibg=#cae682 ctermfg=0 ctermbg=195
-
+" Errors
 hi Error gui=undercurl ctermfg=203 ctermbg=none cterm=underline guisp=#FF6C60
 hi ErrorMsg guifg=white guibg=#FF6C60 gui=bold ctermfg=white ctermbg=203 cterm=bold
 hi WarningMsg guifg=white guibg=#FF6C60 gui=bold ctermfg=white ctermbg=203 cterm=bold
-
-hi ModeMsg guifg=black guibg=#C6C5FE gui=bold ctermfg=0 ctermbg=189 cterm=bold
 
 " Cursorline highlighting if supported
 if version >= 700 " Vim 7.x specific colors
@@ -52,32 +55,33 @@ if version >= 700 " Vim 7.x specific colors
     " Revert Color to default when leaving Insert Mode
         autocmd InsertLeave * hi Cursorline guibg=#0d0f00 gui=none ctermbg=233 cterm=none
         autocmd InsertLeave * hi CursorColumn guibg=#0d0f00 gui=none ctermbg=233 cterm=none
-    hi MatchParen guifg=#a70400 guibg=#000000 gui=bold ctermfg=Red ctermbg=black cterm=Bold
-        " for Command-T
-            hi Pmenu guifg=cyan guibg=#121212 gui=None ctermfg=blue ctermbg=234 cterm=None 
-            hi PmenuSel guifg=black guibg=#cc7000 gui=Bold ctermfg=232 ctermbg=094 cterm=Bold 
-            hi PmenuSbar guifg=black guibg=white ctermfg=0 ctermbg=15
-    hi Pmenu guifg=#f6f3e8 guibg=#444444 ctermfg=white ctermbg=242
-    hi PmenuSel guifg=#000000 guibg=#cae682 ctermfg=0 ctermbg=195
-        " Search highlighting
-            hi Search guifg=black guibg=#cc7000 ctermfg=232 ctermbg=094 cterm=None
 endif
 
-        " this needs to be put into it's own function. if colorcolumn is set
-        " in the color scheme, then do the logic.
-        " highlight the 80th column
-            set colorcolumn=80
-            " In Vim >= 7.3, also highlight columns 120+
-            if exists('+colorcolumn')
-                " (I picked 120-320 because you have to provide an upper bound and 320 just covers a
-                " 1080p GVim window in Ubuntu Mono 11 font.)
-                let &colorcolumn="80,".join(range(120,320),",")
-                highlight ColorColumn ctermbg=232 guibg=#0d0d0d
-                set cursorcolumn
-            else
-                "fallback for Vim < v7.3
-                autocmd BufWinEnter * let w:m2=matchadd('ErrorMsg', '\%>80v.\+', -1)
-            endif
+" Menus
+hi Pmenu guifg=cyan guibg=#121212 gui=None ctermfg=blue ctermbg=234 cterm=None 
+hi PmenuSel guifg=black guibg=#cc7000 gui=Bold ctermfg=232 ctermbg=094 cterm=Bold 
+hi PmenuSbar guifg=black guibg=white ctermfg=0 ctermbg=15
+hi Pmenu guifg=#f6f3e8 guibg=#444444 ctermfg=white ctermbg=242
+hi PmenuSel guifg=#000000 guibg=#cae682 ctermfg=0 ctermbg=195
+
+" Search highlighting
+hi Search guifg=black guibg=#cc7000 ctermfg=232 ctermbg=094 cterm=None
+
+" this needs to be put into it's own function. if colorcolumn is set
+" in the color scheme, then do the logic.
+" highlight the 80th column
+    set colorcolumn=80
+    " In Vim >= 7.3, also highlight columns 120+
+    if exists('+colorcolumn')
+        " (I picked 120-320 because you have to provide an upper bound and 320 just covers a
+        " 1080p GVim window in Ubuntu Mono 11 font.)
+        let &colorcolumn="80,".join(range(120,320),",")
+        highlight ColorColumn ctermbg=232 guibg=#0a0a0a
+        set cursorcolumn
+    else
+        "fallback for Vim < v7.3
+        autocmd BufWinEnter * let w:m2=matchadd('ErrorMsg', '\%>80v.\+', -1)
+    endif
 
 " Diff Highlighting
 hi DiffAdd guibg=#054000 ctermbg=22
@@ -86,7 +90,7 @@ hi DiffText guibg=#cccccc guifg=#000000 ctermbg=247 ctermfg=16
 hi DiffDelete guibg=#990000 guifg=#000000 ctermbg=88  ctermfg=black
 
 " Syntax highlighting
-hi Comment guifg=#7C7C7C ctermfg=8
+hi Comment guifg=#333333 ctermfg=8
 hi String guifg=#A8FF60 ctermfg=155
 hi Number guifg=#FF73FD ctermfg=207
 
@@ -97,10 +101,11 @@ hi Conditional guifg=#6699CC ctermfg=110
 hi Todo guifg=#000000 guibg=#cae682 ctermfg=0 ctermbg=195
 hi Constant guifg=#99CC99 ctermfg=151
 
-hi Identifier guifg=#C6C5FE ctermfg=189
-hi Function guifg=#FFD2A7 ctermfg=223
-hi Type guifg=#FFFFB6 ctermfg=229
-hi Statement guifg=#6699CC ctermfg=110
+hi Identifier guifg=#5E73B1 ctermfg=68
+hi Function guifg=#ba997a ctermfg=216
+hi Type guifg=#b3b380 ctermfg=228
+hi Type guifg=#c4c46c ctermfg=228
+hi Statement guifg=#44678A ctermfg=67
 
 hi Special guifg=#E18964 ctermfg=173
 hi Delimiter guifg=#00A0A0 ctermfg=37
