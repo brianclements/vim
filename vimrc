@@ -1,9 +1,9 @@
 " VIM Configuration for Brian Clements
 " URL:      github.com/brianclements/vim
-" Version:  1.3.6
-" Date:     2014.09.30-12:22 
+" Version:  1.3.7
+" Date:     2014.10.06-22:59 
 " Changes:  
-" - changed git pull/push keybinds to be more syntactically accurate.
+" - Typo in $PWD logic. Only cd if $PWD exists, not !exists.
 " ------------------
 
 " ------------------
@@ -52,7 +52,7 @@
         syntax on
         filetype plugin indent on
     " Default directory
-        if !exists("$PWD")
+        if exists("$PWD")
             cd $PWD
         endif
 
