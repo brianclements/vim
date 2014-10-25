@@ -1,9 +1,11 @@
 " VIM Configuration for Brian Clements
 " URL:      github.com/brianclements/vim
-" Version:  1.3.7
-" Date:     2014.10.06-22:59 
+" Version:  1.3.8
+" Date:     2014.10.24-21:02 
 " Changes:  
-" - Typo in $PWD logic. Only cd if $PWD exists, not !exists.
+" - Set tabs correctly in yml files to make use of proper indenting.
+" - correct "set" instances to "setlocal" in filetype specific settings.
+" - set foldignore so that comments don't mess up my folding!
 " ------------------
 
 " ------------------
@@ -103,6 +105,7 @@
                 " au BufWinEnter * if &fdm == 'indent' | setlocal foldmethod=manual | endif
             " augroup END
         set foldmethod=indent
+        set foldignore=
         " Saves manual folds
             au BufWinLeave ?* mkview 1
             au BufWinEnter ?* silent loadview 1
@@ -918,8 +921,8 @@
             \ nnoremap <leader>lpS :!killall timidity &<CR> |
             \ nnoremap <leader>lv :!evince "%:p:r.pdf" &<CR> |
             \ nnoremap <leader>lvs :!evince "%:p:h:h/score/score.pdf" &<CR> |
-            \ set tabstop=4 |
-            \ set shiftwidth=4
+            \ setlocal tabstop=4 |
+            \ setlocal shiftwidth=4
             " add support for compile time errors use new :Shell command
     " Lilypond-book Files
         autocmd BufRead,BufNewFile *.lytex
@@ -948,22 +951,26 @@
             \ nnoremap <leader>hc :g/^$/d<CR> |
             \ setfiletype htmldjango |
             \ nnoremap <leader>hp :!chromium-browser --incognito "%:p" &<CR> |
-            \ set omnifunc=htmlcomplete#CompleteTags
+            \ setlocal omnifunc=htmlcomplete#CompleteTags
     " JavaScript
         autocmd FileType javascript
-            \ set omnifunc=javascriptcomplete#CompleteJS
+            \ setlocal omnifunc=javascriptcomplete#CompleteJS
     " CSS
         autocmd BufRead,BufNewFile *.css
             \ nnoremap <leader>hf :%s/<[^>]*>/\r&\r/g<CR> |
             \ nnoremap <leader>hc :g/^$/d<CR> |
             \ setfiletype css |
-            \ set omnifunc=csscomplete#CompleteCSS
+            \ setlocal omnifunc=csscomplete#CompleteCSS
     " Python
         autocmd BufRead,BufNewFile *.py
-            \ set omnifunc=pythoncomplete#Complete |
-            \ set foldnestmax=2 |
-            \ set foldlevel=0 |
-            \ set foldlevelstart=2
+            \ setlocal omnifunc=pythoncomplete#Complete |
+            \ setlocal foldnestmax=2 |
+            \ setlocal foldlevel=0 |
+            \ setlocal foldlevelstart=2
     " Dockerfiles
         autocmd BufEnter *
            \ if @% == 'Dockerfile' | set ft=sh | endif
+    " Yaml
+        autocmd BufRead *.yml,*.yaml
+            \ setlocal tabstop=2 |
+            \ setlocal shiftwidth=2
