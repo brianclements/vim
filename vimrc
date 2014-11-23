@@ -1,11 +1,11 @@
 " VIM Configuration for Brian Clements
 " URL:      github.com/brianclements/vim
-" Version:  1.3.8
-" Date:     2014.10.24-21:02 
+" Version:  1.3.9
+" Date:     2014.11.22-23:18 
 " Changes:  
-" - Set tabs correctly in yml files to make use of proper indenting.
-" - correct "set" instances to "setlocal" in filetype specific settings.
-" - set foldignore so that comments don't mess up my folding!
+" - move spelling highlighting to theme where it belongs (and actually works too)
+" - set guicursor to match terminal
+" - set gui window size to better default
 " ------------------
 
 " ------------------
@@ -186,6 +186,7 @@
         set fileencodings=ucs-bom,utf-8,default,latin1
         " Set gui colors
         exec "colors " . colorscheme
+        set guicursor=n-v-c-i:hor10-Cursor
         set guifont=Ubuntu\ Mono\ for\ Powerline\ 12
         " Other font options include:
         "   Default: Ubuntu\ Mono\ for\ Powerline\ 12
@@ -215,10 +216,10 @@
             set nomousehide " default
             autocmd InsertEnter * set mousehide
             autocmd InsertLeave * set nomousehide
+        " logical small starting size for window
+        set columns=119
+        set lines=40
     else " some things for terminal only
-        " Spelling highlight Compatibility
-        hi clear SpellBad
-        hi SpellBad cterm=bold,italic ctermfg=red
         " Set xterm and last resort tty colors
         if &t_Co > 16
             set t_Co=256

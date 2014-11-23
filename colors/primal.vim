@@ -83,6 +83,10 @@ hi Search guifg=black guibg=#cc7000 ctermfg=232 ctermbg=094 cterm=None
         autocmd BufWinEnter * let w:m2=matchadd('ErrorMsg', '\%>80v.\+', -1)
     endif
 
+" Spelling
+hi clear SpellBad
+hi SpellBad cterm=bold,italic ctermfg=red
+
 " Diff Highlighting
 hi DiffAdd guibg=#054000 ctermbg=22
 hi DiffChange guibg=#002e4d ctermbg=17
