@@ -1,11 +1,9 @@
 " VIM Configuration for Brian Clements
 " URL:      github.com/brianclements/vim
-" Version:  1.3.9
-" Date:     2014.11.22-23:18 
+" Version:  1.3.10
+" Date:     2014.12.08-02:24
 " Changes:  
-" - move spelling highlighting to theme where it belongs (and actually works too)
-" - set guicursor to match terminal
-" - set gui window size to better default
+" - fix colorscheme issues around tty/fbterm/tmux usage
 " ------------------
 
 " ------------------
@@ -220,12 +218,19 @@
         set columns=119
         set lines=40
     else " some things for terminal only
-        " Set xterm and last resort tty colors
-        if &t_Co > 16
-            set t_Co=256
-            exec "colors " . colorscheme
-        else
-            colors miro8
+        if $FBTERM == 1 " if using fbterm in tty
+            if $TERM != "fbterm" " only when in tmux
+                set t_Co=8
+                colors miro8
+            else " regular fbterm tty usage
+                set t_Co=256
+                exec "colors " . colorscheme
+            endif
+        else " xterm usage
+            if &t_Co > 16
+                set t_Co=256
+                exec "colors " . colorscheme
+            endif
         endif
     endif
 
