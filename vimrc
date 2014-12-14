@@ -1,9 +1,9 @@
 " VIM Configuration for Brian Clements
 " URL:      github.com/brianclements/vim
-" Version:  1.3.10
-" Date:     2014.12.08-02:24
+" Version:  1.3.11
+" Date:     2014.12.13-23:07 
 " Changes:  
-" - fix colorscheme issues around tty/fbterm/tmux usage
+" - fix yml syntax highlighting/indenting issues
 " ------------------
 
 " ------------------
@@ -977,6 +977,6 @@
         autocmd BufEnter *
            \ if @% == 'Dockerfile' | set ft=sh | endif
     " Yaml
-        autocmd BufRead *.yml,*.yaml
+        autocmd FileType *.yml,*.yaml
             \ setlocal tabstop=2 |
             \ setlocal shiftwidth=2
