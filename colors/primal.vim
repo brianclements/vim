@@ -85,7 +85,7 @@ hi Search guifg=black guibg=#cc7000 ctermfg=232 ctermbg=094 cterm=None
 
 " Spelling
 hi clear SpellBad
-hi SpellBad cterm=bold,italic ctermfg=red
+hi SpellBad gui=undercurl guisp=red cterm=standout ctermfg=red
 
 " Diff Highlighting
 hi DiffAdd guibg=#054000 ctermbg=22
