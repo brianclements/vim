@@ -10,7 +10,7 @@ let g:searchtasks_list=["TODO", "FIXME", "XXX"]
 
 
 " Search tasks {{{
-function! s:SearchTasks(directory)
+function s:SearchTasks(directory)
   if a:directory
     echo "Directory is required (e.g: SearchTasks **/*.c)."
     return ''
@@ -45,5 +45,5 @@ endfunction
 if exists("grepadd") || v:version > 700
   command -nargs=1 SearchTasksGrep call s:SearchTasksGrep('<args>')
 endif
-command! -nargs=1 SearchTasks call s:SearchTasks('<args>')
+command -nargs=1 SearchTasks call s:SearchTasks('<args>')
 " vim:set sw=2 sts=2:
