@@ -1,9 +1,11 @@
 " VIM Configuration for Brian Clements
 " URL:      github.com/brianclements/vim
-" Version:  1.3.11
-" Date:     2014.12.13-23:07 
+" Version:  1.3.12
+" Date:     2014.12.26-21:50 
 " Changes:  
-" - fix yml syntax highlighting/indenting issues
+" - ACTUALLY fix yml syntax highlighting/indenting issues...maybe
+" - diffoff bind changed to `windo diffoff` to behave properly
+" - 2 space tabstops on markdown files for lists etc.
 " ------------------
 
 " ------------------
@@ -363,7 +365,7 @@
     " Diff commands
         nnoremap <silent> <leader>du :diffupdate<CR>
         nnoremap <silent> <leader>dw :diffthis<CR>
-        nnoremap <silent> <leader>do :diffoff<CR>
+        nnoremap <silent> <leader>do :windo diffoff<CR>
     " Buffer Navigation
         nnoremap <leader>bl :buffers<CR>:buffer<Space>
         nnoremap <leader>bg <C-^>
@@ -901,6 +903,8 @@
             \ setlocal filetype=markdown |
             \ setlocal foldlevel=1 |
             \ set foldcolumn=2 |
+            \ setlocal tabstop=2 |
+            \ setlocal shiftwidth=2 |
             \ nnoremap <leader>mp :Me<CR>|
             \ nnoremap <leader>mr :Mer<CR>
     " Vimrc
@@ -977,6 +981,7 @@
         autocmd BufEnter *
            \ if @% == 'Dockerfile' | set ft=sh | endif
     " Yaml
-        autocmd FileType *.yml,*.yaml
+        autocmd FileType,BufRead,BufNewFile *.yaml,*.yml
+            \ so $HOME/.vim/bundle/vim-yaml/after/syntax/yaml.vim |
             \ setlocal tabstop=2 |
             \ setlocal shiftwidth=2
