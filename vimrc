@@ -1,11 +1,9 @@
 " VIM Configuration for Brian Clements
 " URL:      github.com/brianclements/vim
-" Version:  1.3.12
-" Date:     2014.12.26-21:50 
+" Version:  1.3.13
+" Date:     2015.01.01-13:02
 " Changes:  
-" - ACTUALLY fix yml syntax highlighting/indenting issues...maybe
-" - diffoff bind changed to `windo diffoff` to behave properly
-" - 2 space tabstops on markdown files for lists etc.
+" - change back to 4 space tabstops on markdown files
 " ------------------
 
 " ------------------
@@ -897,14 +895,12 @@
         autocmd BufEnter *.*
             \ exec 'Rooter'
     " Markdown (default for all text files)
-        autocmd BufRead,BufNewFile *.text,*.md,*.markdown,*.mkd
+        autocmd FileType,BufRead,BufNewFile *.text,*.md,*.markdown,*.mkd
             \ setlocal spell |
             \ setlocal textwidth=80 |
             \ setlocal filetype=markdown |
             \ setlocal foldlevel=1 |
             \ set foldcolumn=2 |
-            \ setlocal tabstop=2 |
-            \ setlocal shiftwidth=2 |
             \ nnoremap <leader>mp :Me<CR>|
             \ nnoremap <leader>mr :Mer<CR>
     " Vimrc
