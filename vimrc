@@ -1,9 +1,9 @@
 " VIM Configuration for Brian Clements
 " URL:      github.com/brianclements/vim
-" Version:  1.3.13
-" Date:     2015.01.01-13:02
+" Version:  1.3.14
+" Date:     2015.01.25-23:22 
 " Changes:  
-" - change back to 4 space tabstops on markdown files
+" - add better git stash shortcuts
 " ------------------
 
 " ------------------
@@ -704,8 +704,11 @@
         nnoremap <Leader>gc :Gcommit -S<CR>
         nnoremap <Leader>gg :Gwrite<CR>:Gstatus<CR><c-w>w
         nnoremap <Leader>gd :Gdiff<CR>
-        nnoremap <leader>gS :Shell git stash<CR>
-        nnoremap <leader>gSp :Shell git stash pop<CR>
+        nnoremap <leader>gSs :Shell git stash<CR>
+        nnoremap <leader>gS? :Shell git stash list<CR>
+        nnoremap <leader>gSp :Shell git stash pop<space>
+        nnoremap <leader>gSa :Shell git stash apply<space>
+        nnoremap <leader>gSd :Shell git stash drop<space>
         " Tags
         nnoremap <Leader>gt? :Shell git tags<CR>
         nnoremap <Leader>gt :Git tag -s v
@@ -717,6 +720,7 @@
         nnoremap <Leader>gfr :Gread<CR>
         nnoremap <Leader>gfc :Git clean -xdf
         nnoremap <Leader>gRH :Shell git reset --hard
+        nnoremap <Leader>gRS :Shell git reset --soft HEAD~1
         " Branching
         nnoremap <leader>gb :Git branch<space>
         nnoremap <leader>gb? :Shell git branch -a<CR>
