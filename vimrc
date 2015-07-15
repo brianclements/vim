@@ -1,9 +1,10 @@
 " VIM Configuration for Brian Clements
 " URL:      github.com/brianclements/vim
-" Version:  1.3.14
-" Date:     2015.01.25-23:22 
+" Version:  1.3.15
+" Date:     2015.07.15-10:05 
 " Changes:  
 " - add better git stash shortcuts
+" - add indentLine config
 " ------------------
 
 " ------------------
@@ -49,6 +50,7 @@
             Bundle 'christoomey/vim-tmux-navigator'
             Bundle 'stephpy/vim-yaml'
             Bundle 'gilsondev/searchtasks.vim'
+            Bundle 'Yggdroot/indentLine'
         syntax on
         filetype plugin indent on
     " Default directory
@@ -372,6 +374,7 @@
         nnoremap <silent> <leader>bp :bprev<CR>
         nnoremap <silent> <a--> :bprev<CR>
         nnoremap <silent> <leader>bd :bnext<CR>:bd #<CR>
+        nnoremap <silent> <leader>bD :enew<CR>:bd #<CR>
         nnoremap <silent> <leader>bq :bd<CR>
         nnoremap <silent> <leader>bQ :bd!<CR>
     " System commands
@@ -753,7 +756,7 @@
         nnoremap <leader>gm :Git merge<space>
         nnoremap <leader>gmc :Git cherry-pick <cword><CR>
         " Rebase
-        nnoremap <leader>gRs :Git rebase -i HEAD~
+        nnoremap <leader>gRi :Git rebase -i HEAD~
         nnoremap <leader>gR :Shell git rebase<space>
         " Submodules
         nnoremap <leader>gs? :Shell git submodule status<CR>
@@ -891,6 +894,12 @@
         let g:popwindow_close_types = [
             \'fugitive-diff', 'help', 'permissive_temp', 'fugitive', 'temp',
             \'quickfix']
+    " indentLine
+        let g:indentLine_enabled = 1
+        " let g:indentLine_char = '︙'
+        let g:indentLine_color_term = 235
+        let g:indentLine_color_gui = '#262626'
+        let g:intentLine_faster = 1
 
 " ------------------
 " Filetype Specific Options
