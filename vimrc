@@ -1,10 +1,13 @@
 " VIM Configuration for Brian Clements
 " URL:      github.com/brianclements/vim
-" Version:  1.3.15
-" Date:     2015.07.15-10:05 
+" Version:  1.3.16
+" Date:     2016.01.14-10:21 
 " Changes:  
-" - add better git stash shortcuts
-" - add indentLine config
+" - remap join command
+" - don't conceal cursor in indentLine
+" - add "cursor freeze" screen scroll variarnt using shift-j|k
+" - remove lilypond plugin sourcing from distro, use bundled plugin instead
+" - update/change lilypond shortcuts (WIP, still half broken)
 " ------------------
 
 " ------------------
@@ -286,6 +289,8 @@
         :nnoremap <F4> "=strftime(" %Y.%m.%d-%R")<CR>P
         :inoremap <F4> <C-R>=strftime("%Y.%m.%d-%R")<CR>
     " Cursor Nagivation
+        " remap join first
+            nnoremap <silent><leader>J <s-j>
         " Enable insert mode navigation to mimic Xterm functions
             inoremap <C-j> <Down>
             inoremap <C-k> <Up>
@@ -297,8 +302,10 @@
             inoremap <S-Space> <c-o><C-e>
             inoremap <S-C-Space> <c-o><C-y>
         " Scroll lines quicker and better
-            nnoremap <s-j> 7j
-            nnoremap <s-k> 7k
+            nnoremap <s-j> <c-e><bar>j
+            nnoremap <s-k> <c-y><bar>k
+            vnoremap <s-j> <c-e><bar>j
+            vnoremap <s-k> <c-y><bar>k
             nnoremap <c-e> 10<c-e>
             nnoremap <c-y> 10<c-y>
             vnoremap <C-j> 7j
@@ -684,8 +691,6 @@
         " 'plaintex' instead of 'tex', which results in vim-latex not being loaded.
         " The following changes the default filetype back to 'tex':
         let g:tex_flavor='latex'
-    " lilypond
-        set runtimepath+=/usr/share/lilypond/2.14.2/vim/
     " vimoutliner
         " defaults:
             let otl_install_menu=1
@@ -900,6 +905,7 @@
         let g:indentLine_color_term = 235
         let g:indentLine_color_gui = '#262626'
         let g:intentLine_faster = 1
+        let g:indentLine_noConcealCursor = 1
 
 " ------------------
 " Filetype Specific Options
@@ -928,21 +934,20 @@
             \ inoremap <C-S-CR> <CR><C-d><BS>
     " Lilypond Files
         autocmd BufRead,BufNewFile *.ly,*.ily
-            \ setfiletype lilypond |
-            \ setlocal noai nocin nosi inde= |
-            \ setlocal autoindent |
             \ setlocal foldlevel=0 |
-            \ nnoremap <leader>lwm :wa<CR> <bar> :!lilypond "%:p"<CR> |
-            \ nnoremap <leader>lm :!lilypond "%:p"<CR> |
-            \ nnoremap <leader>lms :wa<CR> <bar> :cd ../score<CR> <bar>
-                \ :!lilypond "%:p:h:h/score/score.ly"<CR> <bar> :cd ../music<CR> |
+            \ nnoremap <leader>lwm :wa<CR> <bar> :Shell lilypond -o %:p:r %:p<CR> |
+            \ nnoremap <leader>lm :Shell lilypond -o %:p:r %:p<CR> |
+            \ nnoremap <leader>lms :wa<CR> <bar> :Shell lilypond -o %:p:h:h/template/score %:p:h:h/template/score.ly<CR> |
             \ nnoremap <leader>lps :!timidity "%:p:h:h/score/score.midi" &<CR> |
             \ nnoremap <leader>lpS :!killall timidity &<CR> |
             \ nnoremap <leader>lv :!evince "%:p:r.pdf" &<CR> |
-            \ nnoremap <leader>lvs :!evince "%:p:h:h/score/score.pdf" &<CR> |
-            \ setlocal tabstop=4 |
-            \ setlocal shiftwidth=4
-            " add support for compile time errors use new :Shell command
+            \ nnoremap <leader>[ :cp<CR> |
+            \ nnoremap <leader>] :cn<CR> |
+            \ nnoremap <leader>lvs :!evince "%:p:h:h/score/score.pdf" &<CR>
+            " \ setfiletype lilypond |
+            " \ setlocal noai nocin nosi inde= |
+            " \ setlocal foldenable |
+            " \ setlocal foldmethod=syntax |
     " Lilypond-book Files
         autocmd BufRead,BufNewFile *.lytex
             \ setfiletype lilypond |
