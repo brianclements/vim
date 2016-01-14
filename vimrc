@@ -1,13 +1,9 @@
 " VIM Configuration for Brian Clements
 " URL:      github.com/brianclements/vim
-" Version:  1.3.16
-" Date:     2016.01.14-10:21 
+" Version:  1.3.18
+" Date:     2016.01.14-10:53 
 " Changes:  
-" - remap join command
-" - don't conceal cursor in indentLine
-" - add "cursor freeze" screen scroll variarnt using shift-j|k
-" - remove lilypond plugin sourcing from distro, use bundled plugin instead
-" - update/change lilypond shortcuts (WIP, still half broken)
+" - re-add my own lilypond plugin
 " ------------------
 
 " ------------------
@@ -48,7 +44,7 @@
             Bundle 'ap/vim-css-color'
             Bundle 'tpope/vim-repeat'
             Bundle 'tpope/vim-surround'
-            Bundle 'lfairy/lilyvim'
+            Bundle 'brianclements/vim-lilypond'
             Bundle 'jmcantrell/vim-virtualenv'
             Bundle 'christoomey/vim-tmux-navigator'
             Bundle 'stephpy/vim-yaml'
