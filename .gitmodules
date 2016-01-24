@@ -87,3 +87,6 @@
 [submodule "bundle/vim-lilypond"]
 	path = bundle/vim-lilypond
 	url = git@github.com:brianclements/vim-lilypond.git
+[submodule "bundle/vim-racket"]
+	path = bundle/vim-racket
+	url = git@github.com:wlangstroth/vim-racket.git

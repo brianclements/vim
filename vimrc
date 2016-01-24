@@ -1,9 +1,9 @@
 " VIM Configuration for Brian Clements
 " URL:      github.com/brianclements/vim
-" Version:  1.3.18
-" Date:     2016.01.14-10:53 
+" Version:  1.3.19
+" Date:     2016.01.24-15:01 
 " Changes:  
-" - re-add my own lilypond plugin
+" - add vim-racket plugin
 " ------------------
 
 " ------------------
@@ -50,6 +50,7 @@
             Bundle 'stephpy/vim-yaml'
             Bundle 'gilsondev/searchtasks.vim'
             Bundle 'Yggdroot/indentLine'
+            Bundle 'wlangstroth/vim-racket'
         syntax on
         filetype plugin indent on
     " Default directory
