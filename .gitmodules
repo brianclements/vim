@@ -4,9 +4,6 @@
 [submodule "scrooloose/nerdcommenter"]
     path = bundle/nerdcommenter
     url = https://github.com/scrooloose/nerdcommenter.git
-[submodule "scrooloose/nerdtree"]
-    path = bundle/nerdtree
-    url = https://github.com/scrooloose/nerdtree.git
 [submodule "Lokaltog/powerline"]
     path = bundle/powerline
     url = https://github.com/Lokaltog/powerline.git

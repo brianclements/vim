@@ -1,13 +1,9 @@
 " VIM Configuration for Brian Clements
 " URL:      github.com/brianclements/vim
-" Version:  1.4.0
-" Date:     2016.05.24-12:46 
+" Version:  1.4.1
+" Date:     2016.05.24-13:06 
 " Changes:  
-"   - add λ character and lisp support
-"   - edit line joining
-"   - update html tools
-"   - add sparkup
-"   - update/fix vundle
+" - pull NERDTree, was conflicting with fugitive
 " ------------------
 
 " ------------------
@@ -27,7 +23,6 @@
             Plugin 'VundleVim/Vundle.vim'
         " additional Bundles
             Plugin 'scrooloose/nerdcommenter'
-            Bundle 'scrooloose/nerdtree'
             Plugin 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim/'}
             Plugin 'tpope/vim-fugitive'
             Plugin 'klen/python-mode'
@@ -249,8 +244,8 @@
     " Change the mapleader from \ to ;
         let mapleader=";"
     " Quick edit and reload of .vimrc
-        nnoremap <silent> <leader>ev :e $HOME/.vim/vimrc <bar> NERDTreeFind<CR>
-        nnoremap <silent> <leader>ed :e $DOTFILES/README.md <bar> NERDTreeFind<CR>
+        nnoremap <silent> <leader>ev :e $HOME/.vim/vimrc<CR>
+        nnoremap <silent> <leader>ed :e $DOTFILES/README.md<CR>
         nnoremap <silent> <leader>Sv :so $MYVIMRC<CR>
         nnoremap <silent> <leader>Sf :so %<CR>:echo 'loaded file: ' . @%<CR>
         nnoremap <silent> <leader>wSv :w<CR>:so $MYVIMRC<CR>
@@ -634,60 +629,6 @@
             endif
         endfunction
         command! -nargs=* AddPyLintIgnore call AddPyLintIgnore(<f-args>)
-    " Better NERDTree toggle
-        " inspiration from: http://superuser.com/questions/195022/vim-how-to-synchronize-nerdtree-with-current-opened-tab-file-path
-        " If closed -> NerdTree
-        " If cursor in newfile -> NerdTree
-        " If cursor in samefile -> NerdTreeToggle
-        function! NERDTreeFindToggle()
-            " Check if NERDTree is open
-            let ntree_buf = winbufnr(1)
-            let ntree_status = 0
-            if getbufvar(ntree_buf, 'NERDTreeType') ==# 'primary'
-                let ntree_status = 1
-            endif
-
-            " set defaults
-            let g:ntree_curwin = winnr()
-            let g:ntree_this_buf = expand('%:p:h')
-            if !exists ('g:ntree_prev_buf')
-                let g:ntree_prev_buf = g:ntree_this_buf
-            endif
-
-            " Move cursor to prev window if in NERDTree window
-            if g:ntree_this_buf =~# 'NERD_tree' 
-                exec g:ntree_curwin . ' wincmd w'
-                let g:ntree_this_buf = expand('%:p:h')
-                let g:ntree_curwin = winnr()
-                let g:ntree_prev_buf = g:ntree_this_buf
-            endif
-
-            exec 'cd %:p:h'
-
-            " Closed, open NERDTree
-            if ntree_status == 0
-                let g:ntree_curwin = winnr()
-                " Remember the file that's open
-                let g:ntree_prev_buf = g:ntree_this_buf
-                " Window numbers are changing!
-                let g:ntree_curwin = g:ntree_curwin + 1
-                NERDTree
-            else
-                " New window, refresh NERDTree
-                if g:ntree_this_buf != g:ntree_prev_buf
-                    NERDTreeFind
-                    wincmd p
-                    let g:ntree_prev_buf = g:ntree_this_buf
-                else
-                    " Same window, close NERDTree
-                    let g:ntree_curwin = g:ntree_curwin - 1
-                    NERDTreeClose
-                    exec g:ntree_curwin . ' wincmd w'
-                    let g:ntree_prev_buf = expand('%:p:h')
-                endif
-            endif
-        endfunction
-        command! NERDTreeFindToggle call NERDTreeFindToggle()
 
 " ------------------
 " Plugin Options
@@ -789,12 +730,9 @@
         " Other
         nnoremap <Leader>gwq :Gwq<CR>
         nnoremap <leader>gV :!gitg<CR>
-    " NERDTree
-        nnoremap <silent> <leader>t :NERDTreeFindToggle<cr>
-        " autocmd vimenter * if !argc() | :NERDTreeToggle | endif
-        autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && 
-            \ b:NERDTreeType == "primary") | q | endif
-        let NERDTreeIgnore=['\.pyc$', '\~$']
+    " Explorer Mode
+        nnoremap <silent> <leader>t :Vexplore<cr>
+        let g:netrw_liststyle=3
     " NERDCommenter
         let NERDSpaceDelims=1
         let NERDCompactSexyComs=1
