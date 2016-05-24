@@ -1,9 +1,13 @@
 " VIM Configuration for Brian Clements
 " URL:      github.com/brianclements/vim
-" Version:  1.3.19
-" Date:     2016.01.24-15:01 
+" Version:  1.4.0
+" Date:     2016.05.24-12:46 
 " Changes:  
-" - add vim-racket plugin
+"   - add λ character and lisp support
+"   - edit line joining
+"   - update html tools
+"   - add sparkup
+"   - update/fix vundle
 " ------------------
 
 " ------------------
@@ -11,46 +15,49 @@
 " ------------------
     " when started as "evim", evim.vim will a lready have done these settings.
         if v:progname =~? "evim"
-            finish
+           finish
         endif
     " this must be first, because it changes other options as a side effect.
         set nocompatible
     " Vundle
         filetype off
-        set rtp+=~/.vim/bundle/vundle
-        call vundle#rc()
+        set rtp+=~/.vim/bundle/Vundle.vim
+        call vundle#begin()
         " let vundle manage vundle, required
-            Bundle 'gmarik/vundle'
+            Plugin 'VundleVim/Vundle.vim'
         " additional Bundles
-            Bundle 'scrooloose/nerdcommenter'
+            Plugin 'scrooloose/nerdcommenter'
             Bundle 'scrooloose/nerdtree'
-            Bundle 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim/'}
-            Bundle 'tpope/vim-fugitive'
-            Bundle 'klen/python-mode'
-            Bundle 'vimoutliner/vimoutliner'
-            Bundle 'vim-scripts/Tagbar'
-            Bundle 'wincent/Command-T'
-            Bundle 'Lokaltog/powerline-fonts'
-            Bundle 'chrisbra/csv.vim'
-            Bundle 'mattboehm/vim-accordion'
-            Bundle 'ervandew/supertab'
-            Bundle 'plasticboy/vim-markdown'
-            Bundle 'waylan/vim-markdown-extra-preview'
-            Bundle 'airblade/vim-rooter'
-            Bundle 'bling/vim-bufferline'
-            Bundle 'vim-scripts/ScrollColors'
-            Bundle 'brianclements/vim-popwindow'
-            Bundle 'tomasr/molokai'
-            Bundle 'ap/vim-css-color'
-            Bundle 'tpope/vim-repeat'
-            Bundle 'tpope/vim-surround'
-            Bundle 'brianclements/vim-lilypond'
-            Bundle 'jmcantrell/vim-virtualenv'
-            Bundle 'christoomey/vim-tmux-navigator'
-            Bundle 'stephpy/vim-yaml'
-            Bundle 'gilsondev/searchtasks.vim'
-            Bundle 'Yggdroot/indentLine'
-            Bundle 'wlangstroth/vim-racket'
+            Plugin 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim/'}
+            Plugin 'tpope/vim-fugitive'
+            Plugin 'klen/python-mode'
+            Plugin 'vimoutliner/vimoutliner'
+            Plugin 'vim-scripts/Tagbar'
+            Plugin 'wincent/Command-T'
+            Plugin 'Lokaltog/powerline-fonts'
+            Plugin 'chrisbra/csv.vim'
+            Plugin 'mattboehm/vim-accordion'
+            Plugin 'ervandew/supertab'
+            Plugin 'plasticboy/vim-markdown'
+            Plugin 'waylan/vim-markdown-extra-preview'
+            Plugin 'airblade/vim-rooter'
+            Plugin 'bling/vim-bufferline'
+            Plugin 'vim-scripts/ScrollColors'
+            Plugin 'brianclements/vim-popwindow'
+            Plugin 'tomasr/molokai'
+            Plugin 'ap/vim-css-color'
+            Plugin 'tpope/vim-repeat'
+            Plugin 'tpope/vim-surround'
+            Plugin 'brianclements/vim-lilypond'
+            Plugin 'jmcantrell/vim-virtualenv'
+            Plugin 'christoomey/vim-tmux-navigator'
+            Plugin 'stephpy/vim-yaml'
+            Plugin 'gilsondev/searchtasks.vim'
+            Plugin 'Yggdroot/indentLine'
+            Plugin 'wlangstroth/vim-racket'
+            Plugin 'rstacruz/sparkup'
+            Plugin 'maksimr/vim-jsbeautify'
+        call vundle#end()
         syntax on
         filetype plugin indent on
     " Default directory
@@ -287,7 +294,11 @@
         :inoremap <F4> <C-R>=strftime("%Y.%m.%d-%R")<CR>
     " Cursor Nagivation
         " remap join first
-            nnoremap <silent><leader>J <s-j>
+            nnoremap <silent><leader>lj <s-j>
+        " split line, and return to current spot
+            nnoremap <silent><leader>ls m'i<CR><ESC>``
+        " Just split line
+            nnoremap <silent><leader>lS r<CR>
         " Enable insert mode navigation to mimic Xterm functions
             inoremap <C-j> <Down>
             inoremap <C-k> <Up>
@@ -448,6 +459,8 @@
     " Universal fold level
       " because many times, it just doesn't get activated
       nnoremap <silent> <leader>vf :set foldmethod=indent<CR>
+    " lambda the ultimate
+        inoremap <C-l> λ
 
 " ------------------
 " Functions & Tools
@@ -903,6 +916,9 @@
         let g:indentLine_color_gui = '#262626'
         let g:intentLine_faster = 1
         let g:indentLine_noConcealCursor = 1
+    " Sparkup
+        let g:sparkupExecuteMapping = '<c-i>'
+        " let g:sparkupNextMapping = <c-n>
 
 " ------------------
 " Filetype Specific Options
@@ -967,20 +983,24 @@
             \ setfiletype csv
         augroup END
     " HTML
-        autocmd BufRead,BufNewFile *.html
-            \ nnoremap <leader>hf :%s/<[^>]*>/\r&\r/g<CR> |
-            \ nnoremap <leader>hc :g/^$/d<CR> |
-            \ setfiletype htmldjango |
-            \ nnoremap <leader>hp :!chromium-browser --incognito "%:p" &<CR> |
-            \ setlocal omnifunc=htmlcomplete#CompleteTags
+        autocmd BufRead,BufNewFile,BufEnter *.html,*.htmldjango
+            \ setfiletype html |
+            \ setlocal tabstop=2 |
+            \ setlocal shiftwidth=2 |
+            \ set smartindent |
+            \ nnoremap <leader>hf gg=G<CR> |
+            \ nnoremap <leader>hp :!firefox --safe-mode --new-window "%:p" &<CR> |
+            \ setlocal omnifunc=htmlcomplete#CompleteTags |
+            \ let g:html_indent_inctags = "html,body,head,tbody"
     " JavaScript
         autocmd FileType javascript
             \ setlocal omnifunc=javascriptcomplete#CompleteJS
     " CSS
-        autocmd BufRead,BufNewFile *.css
-            \ nnoremap <leader>hf :%s/<[^>]*>/\r&\r/g<CR> |
-            \ nnoremap <leader>hc :g/^$/d<CR> |
+        autocmd FileType css
+            \ nnoremap <leader>hf gg=G<CR> |
             \ setfiletype css |
+            \ setlocal tabstop=2 |
+            \ setlocal shiftwidth=2 |
             \ setlocal omnifunc=csscomplete#CompleteCSS
     " Python
         autocmd BufRead,BufNewFile *.py
@@ -994,5 +1014,9 @@
     " Yaml
         autocmd FileType,BufRead,BufNewFile *.yaml,*.yml
             \ so $HOME/.vim/bundle/vim-yaml/after/syntax/yaml.vim |
+            \ setlocal tabstop=2 |
+            \ setlocal shiftwidth=2
+    " LISP indenting
+        autocmd FileType,BufRead,BufNewFile *.rkt,*.rktl,*.ss,*.scm,*.sch 
             \ setlocal tabstop=2 |
             \ setlocal shiftwidth=2
