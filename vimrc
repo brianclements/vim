@@ -1,9 +1,15 @@
 " VIM Configuration for Brian Clements
 " URL:      github.com/brianclements/vim
-" Version:  1.4.1
-" Date:     2016.05.24-13:06 
+" Version:  1.4.2
+" Date:     2016.05.28-00:58 
 " Changes:  
 " - pull NERDTree, was conflicting with fugitive
+" - explorer mode
+"   - keyboard shortcuts
+"   - popwindow settings
+"   - settings
+" - JsBeautify settings/shortuts
+" - proper filetype detection settings in plugins
 " ------------------
 
 " ------------------
@@ -730,9 +736,13 @@
         " Other
         nnoremap <Leader>gwq :Gwq<CR>
         nnoremap <leader>gV :!gitg<CR>
-    " Explorer Mode
-        nnoremap <silent> <leader>t :Vexplore<cr>
-        let g:netrw_liststyle=3
+    " Explorer Mode (Netrw)
+        nnoremap <silent> <leader>F :Explore<cr>
+        nnoremap <silent> <leader>ft :Texplore<cr>
+        nnoremap <silent> <leader>fv :Vexplore<cr>
+        nnoremap <silent> <leader>fh :Hexplore<cr>
+        let g:netrw_liststyle=4
+        let g:netrw_browse_split=0
     " NERDCommenter
         let NERDSpaceDelims=1
         let NERDCompactSexyComs=1
@@ -845,8 +855,8 @@
         nnoremap <leader>us :SearchTasks . 
     " Popwindow
         let g:popwindow_close_types = [
-            \'fugitive-diff', 'help', 'permissive_temp', 'fugitive', 'temp',
-            \'quickfix']
+            \'fugitive-diff', 'help', 'permissive_temp', 'fugitive', 'explorer', 
+            \'temp', 'quickfix']
     " indentLine
         let g:indentLine_enabled = 1
         " let g:indentLine_char = '︙'
@@ -862,10 +872,10 @@
 " Filetype Specific Options
 " ------------------
     " All files
-        autocmd BufEnter *.*
+        autocmd FileType,BufEnter *.*
             \ exec 'Rooter'
     " Markdown (default for all text files)
-        autocmd FileType,BufRead,BufNewFile *.text,*.md,*.markdown,*.mkd
+        autocmd FileType,BufRead,BufNewFile,BufEnter txt,*.text,*.md,*.markdown,*.mkd
             \ setlocal spell |
             \ setlocal textwidth=80 |
             \ setlocal filetype=markdown |
@@ -877,14 +887,14 @@
         autocmd Filetype vimrc
             \ setlocal nospell
     " Vim Outliner
-        autocmd BufRead,BufNewFile *.otl
+        autocmd FileType,BufRead,BufNewFile,BufEnter *.otl
             \ setlocal nonumber |
             \ setlocal textwidth=80 |
             \ setlocal spell |
             \ inoremap <S-CR> <CR><C-t> |
             \ inoremap <C-S-CR> <CR><C-d><BS>
     " Lilypond Files
-        autocmd BufRead,BufNewFile *.ly,*.ily
+        autocmd FileType,BufRead,BufNewFile,BufEnter lilypond,*.ly,*.ily
             \ setlocal foldlevel=0 |
             \ nnoremap <leader>lwm :wa<CR> <bar> :Shell lilypond -o %:p:r %:p<CR> |
             \ nnoremap <leader>lm :Shell lilypond -o %:p:r %:p<CR> |
@@ -900,7 +910,7 @@
             " \ setlocal foldenable |
             " \ setlocal foldmethod=syntax |
     " Lilypond-book Files
-        autocmd BufRead,BufNewFile *.lytex
+        autocmd FileType,BufRead,BufNewFile,BufEnter *.lytex
             \ setfiletype lilypond |
             \ setfiletype latex |
             \ setlocal textwidth=80 |
@@ -921,27 +931,47 @@
             \ setfiletype csv
         augroup END
     " HTML
-        autocmd BufRead,BufNewFile,BufEnter *.html,*.htmldjango
-            \ setfiletype html |
+        autocmd FileType,BufRead,BufNewFile,BufEnter html,xhtml,*.html,*.htmldjango,*.xhtml
             \ setlocal tabstop=2 |
             \ setlocal shiftwidth=2 |
             \ set smartindent |
-            \ nnoremap <leader>hf gg=G<CR> |
+            \ nnoremap <buffer> <leader>= :call HtmlBeautify()<CR> |
+            \ vnoremap <buffer> <leader>= :call RangeHtmlBeautify()<CR> |
             \ nnoremap <leader>hp :!firefox --safe-mode --new-window "%:p" &<CR> |
             \ setlocal omnifunc=htmlcomplete#CompleteTags |
             \ let g:html_indent_inctags = "html,body,head,tbody"
     " JavaScript
-        autocmd FileType javascript
-            \ setlocal omnifunc=javascriptcomplete#CompleteJS
-    " CSS
-        autocmd FileType css
-            \ nnoremap <leader>hf gg=G<CR> |
-            \ setfiletype css |
+        autocmd FileType,BufRead,BufNewFile,BufEnter javascript,*.js
             \ setlocal tabstop=2 |
             \ setlocal shiftwidth=2 |
-            \ setlocal omnifunc=csscomplete#CompleteCSS
+            \ set smartindent |
+            \ setlocal omnifunc=javascriptcomplete#CompleteJS |
+            \ nnoremap <buffer> <leader>= :call JsBeautify()<CR> |
+            \ vnoremap <buffer> <leader>= :call RangeJsBeautify()<CR>
+    " CSS
+        autocmd FileType,BufRead,BufNewFile,BufEnter css,*.css
+            \ setlocal tabstop=2 |
+            \ setlocal shiftwidth=2 |
+            \ set smartindent |
+            \ setlocal omnifunc=csscomplete#CompleteCSS |
+            \ nnoremap <buffer> <leader>= :call CSSBeautify()<CR> |
+            \ vnoremap <buffer> <leader>= :call RangeCSSBeautify()<CR>
+    " JSON
+        autocmd FileType,BufRead,BufNewFile,BufEnter json,*.json
+            \ setlocal tabstop=2 |
+            \ setlocal shiftwidth=2 |
+            \ set smartindent |
+            \ nnoremap <buffer> <leader>= :call JsonBeautify()<CR> |
+            \ vnoremap <buffer> <leader>= :call RangeJsonBeautify()<CR>
+    " XML
+        autocmd FileType,BufRead,BufNewFile,BufEnter xml,*.xml,*.mxl
+            \ setlocal tabstop=2 |
+            \ setlocal shiftwidth=2 |
+            \ set smartindent |
+            \ nnoremap <buffer> <leader>= :call HtmlBeautify()<CR> |
+            \ vnoremap <buffer> <leader>= :call RangeHtmlBeautify()<CR>
     " Python
-        autocmd BufRead,BufNewFile *.py
+        autocmd FileType,BufRead,BufNewFile,BufEnter python,*.py
             \ setlocal omnifunc=pythoncomplete#Complete |
             \ setlocal foldnestmax=2 |
             \ setlocal foldlevel=0 |
@@ -950,11 +980,11 @@
         autocmd BufEnter *
            \ if @% == 'Dockerfile' | set ft=sh | endif
     " Yaml
-        autocmd FileType,BufRead,BufNewFile *.yaml,*.yml
+        autocmd FileType,BufRead,BufNewFile,BufEnter yaml,*.yaml,*.yml
             \ so $HOME/.vim/bundle/vim-yaml/after/syntax/yaml.vim |
             \ setlocal tabstop=2 |
             \ setlocal shiftwidth=2
     " LISP indenting
-        autocmd FileType,BufRead,BufNewFile *.rkt,*.rktl,*.ss,*.scm,*.sch 
+        autocmd FileType,BufRead,BufNewFile,BufEnter racket,scheme,*.rkt,*.rktl,*.ss,*.scm,*.sch 
             \ setlocal tabstop=2 |
             \ setlocal shiftwidth=2
