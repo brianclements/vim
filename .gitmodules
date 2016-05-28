@@ -80,13 +80,13 @@
 	url = https://github.com/brianclements/vim-virtualenv.git
 [submodule "bundle/indentLine"]
 	path = bundle/indentLine
-	url = git@github.com:Yggdroot/indentLine.git
+	url = https://github.com/Yggdroot/indentLine.git
 [submodule "bundle/vim-lilypond"]
 	path = bundle/vim-lilypond
-	url = git@github.com:brianclements/vim-lilypond.git
+	url = https://github.com/brianclements/vim-lilypond.git
 [submodule "bundle/vim-racket"]
 	path = bundle/vim-racket
-	url = git@github.com:wlangstroth/vim-racket.git
+	url = https://github.com/wlangstroth/vim-racket.git
 [submodule "bundle/sparkup"]
 	path = bundle/sparkup
 	url = https://github.com/rstacruz/sparkup.git
