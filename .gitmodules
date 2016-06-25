@@ -93,3 +93,6 @@
 [submodule "bundle/vim-jsbeautify"]
 	path = bundle/vim-jsbeautify
 	url = https://github.com/maksimr/vim-jsbeautify.git
+[submodule "bundle/vim-yaml"]
+	path = bundle/vim-yaml
+	url = git@github.com:stephpy/vim-yaml.git
