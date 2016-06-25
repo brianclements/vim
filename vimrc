@@ -1,15 +1,18 @@
 " VIM Configuration for Brian Clements
 " URL:      github.com/brianclements/vim
-" Version:  1.4.2
-" Date:     2016.05.28-00:58 
+" Version:  1.4.3
+" Date:     2016.06.25-13:25 
 " Changes:  
-" - pull NERDTree, was conflicting with fugitive
-" - explorer mode
-"   - keyboard shortcuts
-"   - popwindow settings
-"   - settings
-" - JsBeautify settings/shortuts
-" - proper filetype detection settings in plugins
+" - set &shell in gvim so system() can write temp files
+" - edit dotfiles goes to dir, not README
+" - turn syntax back on after reloading vimrc
+" - improve begin of line keyboard shortcuts
+" - add leader-escape shortcuts to visual and normal modes 
+" - yank to system buffer from visual mode too
+" - change lambda mapping to not conflict with insert mode left/right
+" - add unminify() function for minified javascript files
+" - change tab to 4 spaces for formats that get condensed in transport anyway (js, json,
+"   css, xml). Left html as 2 spaces.
 " ------------------
 
 " ------------------
@@ -227,6 +230,7 @@
         " logical small starting size for window
         set columns=119
         set lines=40
+        set shell=zsh
     else " some things for terminal only
         if $FBTERM == 1 " if using fbterm in tty
             if $TERM != "fbterm" " only when in tmux
@@ -251,11 +255,10 @@
         let mapleader=";"
     " Quick edit and reload of .vimrc
         nnoremap <silent> <leader>ev :e $HOME/.vim/vimrc<CR>
-        nnoremap <silent> <leader>ed :e $DOTFILES/README.md<CR>
-        nnoremap <silent> <leader>Sv :so $MYVIMRC<CR>
+        nnoremap <silent> <leader>ed :e $DOTFILES<CR>
+        nnoremap <silent> <leader>Sv :so $MYVIMRC<CR>:syntax on<CR>
         nnoremap <silent> <leader>Sf :so %<CR>:echo 'loaded file: ' . @%<CR>
-        nnoremap <silent> <leader>wSv :w<CR>:so $MYVIMRC<CR>
-        nnoremap <silent> <leader>eg :e ~/.gitconfig<CR>
+        nnoremap <silent> <leader>wSv :w<CR>:so $MYVIMRC<CR>:syntax on<CR>
     " Basic functions made easier
         nnoremap <silent> <leader>x :x<CR>
         nnoremap <silent> <leader>X :xa<CR>
@@ -271,10 +274,13 @@
         nnoremap <C-w>O :only
         nnoremap <C-w><C-o> :only
         nnoremap <CR> o<Esc>
+        nnoremap HH 0
         nnoremap H ^
+        vnoremap HH 0
         vnoremap H ^
         nnoremap L $
         vnoremap L $
+        nnoremap dD 0D
     " File management
         " Delete current file
             nnoremap <silent> <leader>Sdd :!rm %<CR>:bd<CR>
@@ -282,12 +288,15 @@
             nnoremap <silent> <leader>Sm :!mv %:p<space>
     " clears search buffer highlighting
         nnoremap <silent> <leader>/ :ClearSearchHighlight<CR> 
-    " Insert Mode Escape Made Easier
+    " Escape Made Easier
         inoremap <silent> <leader>j; <ESC>
+        nnoremap <silent> <leader>j; <ESC>
+        vnoremap <silent> <leader>j; <ESC>
     " Carriage Return + demote tab (only in gui)
         inoremap <C-CR> <CR><BS>
     " Cut/paste shortcuts for x-clipboard
         vnoremap <silent> <leader>sy "+y
+        vnoremap <silent> <leader>sp "+p
         nnoremap <silent> <leader>sp "+p
         nnoremap <silent> <leader>sP "+P
     " Timestamp
@@ -461,7 +470,7 @@
       " because many times, it just doesn't get activated
       nnoremap <silent> <leader>vf :set foldmethod=indent<CR>
     " lambda the ultimate
-        inoremap <C-l> λ
+        inoremap <C-y> λ
 
 " ------------------
 " Functions & Tools
@@ -635,6 +644,16 @@
             endif
         endfunction
         command! -nargs=* AddPyLintIgnore call AddPyLintIgnore(<f-args>)
+    " Simple re-format for minified Javascript
+        command! UnMinify call UnMinify()
+        function! UnMinify()
+            %s/{\ze[^\r\n]/{\r/g
+            %s/){/) {/g
+            %s/};\?\ze[^\r\n]/\0\r/g
+            %s/;\ze[^\r\n]/;\r/g
+            %s/[^\s]\zs[=&|]\+\ze[^\s]/ \0 /g
+            normal ggVG=
+        endfunction
 
 " ------------------
 " Plugin Options
@@ -942,31 +961,34 @@
             \ let g:html_indent_inctags = "html,body,head,tbody"
     " JavaScript
         autocmd FileType,BufRead,BufNewFile,BufEnter javascript,*.js
-            \ setlocal tabstop=2 |
-            \ setlocal shiftwidth=2 |
+            \ setlocal tabstop=4 |
+            \ setlocal shiftwidth=4 |
             \ set smartindent |
             \ setlocal omnifunc=javascriptcomplete#CompleteJS |
+            \ nnoremap <buffer> <leader>- :UnMinify<CR> |
             \ nnoremap <buffer> <leader>= :call JsBeautify()<CR> |
             \ vnoremap <buffer> <leader>= :call RangeJsBeautify()<CR>
     " CSS
         autocmd FileType,BufRead,BufNewFile,BufEnter css,*.css
-            \ setlocal tabstop=2 |
-            \ setlocal shiftwidth=2 |
+            \ setlocal tabstop=4 |
+            \ setlocal shiftwidth=4 |
             \ set smartindent |
             \ setlocal omnifunc=csscomplete#CompleteCSS |
+            \ nnoremap <buffer> <leader>- :UnMinify<CR> |
             \ nnoremap <buffer> <leader>= :call CSSBeautify()<CR> |
             \ vnoremap <buffer> <leader>= :call RangeCSSBeautify()<CR>
     " JSON
         autocmd FileType,BufRead,BufNewFile,BufEnter json,*.json
-            \ setlocal tabstop=2 |
-            \ setlocal shiftwidth=2 |
+            \ setlocal tabstop=4 |
+            \ setlocal shiftwidth=4 |
             \ set smartindent |
+            \ nnoremap <buffer> <leader>- :UnMinify<CR> |
             \ nnoremap <buffer> <leader>= :call JsonBeautify()<CR> |
             \ vnoremap <buffer> <leader>= :call RangeJsonBeautify()<CR>
     " XML
         autocmd FileType,BufRead,BufNewFile,BufEnter xml,*.xml,*.mxl
-            \ setlocal tabstop=2 |
-            \ setlocal shiftwidth=2 |
+            \ setlocal tabstop=4 |
+            \ setlocal shiftwidth=4 |
             \ set smartindent |
             \ nnoremap <buffer> <leader>= :call HtmlBeautify()<CR> |
             \ vnoremap <buffer> <leader>= :call RangeHtmlBeautify()<CR>
