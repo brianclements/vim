@@ -61,6 +61,7 @@
             Plugin 'wlangstroth/vim-racket'
             Plugin 'rstacruz/sparkup'
             Plugin 'maksimr/vim-jsbeautify'
+            Plugin 'Shutnik/jshint2.vim'
         call vundle#end()
         syntax on
         filetype plugin indent on
@@ -274,9 +275,7 @@
         nnoremap <C-w>O :only
         nnoremap <C-w><C-o> :only
         nnoremap <CR> o<Esc>
-        nnoremap HH 0
         nnoremap H ^
-        vnoremap HH 0
         vnoremap H ^
         nnoremap L $
         vnoremap L $
@@ -854,7 +853,7 @@
     " vim-rooter
         let g:rooter_manual_only = 0
         let g:rooter_use_lcd = 1
-        let g:rooter_change_directory_for_non_project_files = 1
+        let g:rooter_change_directory_for_non_project_files = 'current'
         let g:rooter_patterns = ['.git', '.git/', '.gitignore', '.gitmodules',
             \ 'README.md', 'README.rst', 'LICENSE', 'VERSION', 'doc/', 'docs/',
             \ 'AUTHORS.MD', 'Rakefile', 'python', ]
@@ -1000,7 +999,7 @@
             \ setlocal foldlevelstart=2
     " Dockerfiles
         autocmd BufEnter *
-           \ if @% == 'Dockerfile' | set ft=sh | endif
+           \ if @% == 'Dockerfile' | setlocal ft=sh | endif
     " Yaml
         autocmd FileType,BufRead,BufNewFile,BufEnter yaml,*.yaml,*.yml
             \ so $HOME/.vim/bundle/vim-yaml/after/syntax/yaml.vim |
