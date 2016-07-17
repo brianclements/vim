@@ -99,3 +99,6 @@
 [submodule "bundle/jshint2.vim"]
 	path = bundle/jshint2.vim
 	url = https://github.com/Shutnik/jshint2.vim.git
+[submodule "bundle/vim-javacomplete2"]
+	path = bundle/vim-javacomplete2
+	url = https://github.com/artur-shaik/vim-javacomplete2.git
