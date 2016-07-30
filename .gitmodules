@@ -42,9 +42,6 @@
 [submodule "plasticboy/vim-markdown"]
     path = bundle/vim-markdown
     url = https://github.com/plasticboy/vim-markdown.git
-[submodule "waylan/vim-markdown-extra-preview"]
-    path = bundle/vim-markdown-extra-preview
-    url = https://github.com/waylan/vim-markdown-extra-preview.git
 [submodule "airblade/vim-rooter"]
     path = bundle/vim-rooter
     url = https://github.com/airblade/vim-rooter.git

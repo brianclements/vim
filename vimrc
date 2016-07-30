@@ -1,18 +1,21 @@
 " VIM Configuration for Brian Clements
 " URL:      github.com/brianclements/vim
-" Version:  1.4.3
-" Date:     2016.06.25-13:25 
+" Version:  1.5.0
+" Date:     2016.07.30-13:59 
 " Changes:  
-" - set &shell in gvim so system() can write temp files
-" - edit dotfiles goes to dir, not README
-" - turn syntax back on after reloading vimrc
-" - improve begin of line keyboard shortcuts
-" - add leader-escape shortcuts to visual and normal modes 
-" - yank to system buffer from visual mode too
-" - change lambda mapping to not conflict with insert mode left/right
-" - add unminify() function for minified javascript files
-" - change tab to 4 spaces for formats that get condensed in transport anyway (js, json,
-"   css, xml). Left html as 2 spaces.
+" - add jshint2.vim to vundle list, config
+" - remove begin of line keymaps; use default
+" - fix rooter config for non projects
+" - setlocal for dockerfiles
+" - Pull vim-markdown-extra-preview plugin
+" - Pull searchtasks.vim plugin
+" - Change to Nerd Fonts
+" - Fix mkview/loadview
+" - Add vimgrep commands
+" - Tagbar toggle fixes
+" - Add vim-javacomplete2 plugin settings
+" - Add vim-android plugin settings
+" - Add gradle/java settings
 " ------------------
 
 " ------------------
@@ -43,7 +46,6 @@
             Plugin 'mattboehm/vim-accordion'
             Plugin 'ervandew/supertab'
             Plugin 'plasticboy/vim-markdown'
-            Plugin 'waylan/vim-markdown-extra-preview'
             Plugin 'airblade/vim-rooter'
             Plugin 'bling/vim-bufferline'
             Plugin 'vim-scripts/ScrollColors'
@@ -56,12 +58,13 @@
             Plugin 'jmcantrell/vim-virtualenv'
             Plugin 'christoomey/vim-tmux-navigator'
             Plugin 'stephpy/vim-yaml'
-            Plugin 'gilsondev/searchtasks.vim'
             Plugin 'Yggdroot/indentLine'
             Plugin 'wlangstroth/vim-racket'
             Plugin 'rstacruz/sparkup'
             Plugin 'maksimr/vim-jsbeautify'
             Plugin 'Shutnik/jshint2.vim'
+            Plugin 'artur-shaik/vim-javacomplete2'
+            Plugin 'hsanson/vim-android'
         call vundle#end()
         syntax on
         filetype plugin indent on
@@ -119,8 +122,8 @@
         set foldmethod=indent
         set foldignore=
         " Saves manual folds
-            au BufWinLeave ?* mkview 1
-            au BufWinEnter ?* silent loadview 1
+            au BufWritePost,BufLeave,WinLeave ?* mkview
+            au BufWinEnter ?* silent loadview
     " Omnicompletion
         set omnifunc=syntaxcomplete#Complete
     " Misc Options
@@ -199,7 +202,7 @@
         " Set gui colors
         exec "colors " . colorscheme
         set guicursor=n-v-c-i:hor10-Cursor
-        set guifont=Ubuntu\ Mono\ for\ Powerline\ 12
+        set guifont=UbuntuMonoDerivativePowerline\ Nerd\ Font\ 12
         " Other font options include:
         "   Default: Ubuntu\ Mono\ for\ Powerline\ 12
         "   Anonymous Pro for Powerline
@@ -470,6 +473,15 @@
       nnoremap <silent> <leader>vf :set foldmethod=indent<CR>
     " lambda the ultimate
         inoremap <C-y> λ
+    " vimgrep
+        map <leader>* *<bar>:execute "noautocmd vimgrep /\\<" . expand("<cword>") . "\\>/gj **/*." .  expand("%:e")<bar>cw<CR>
+        nmap ]q :cnext<CR>
+        nmap [q :cprev<CR>
+        nmap ]Q :cfirst<CR>
+        nmap [Q :clast<CR> 
+        " In the quickfix window, <CR> is used to jump to the error under the
+        " cursor, so undefine the mapping there.
+        autocmd BufReadPost quickfix nnoremap <buffer> <CR> <CR>
 
 " ------------------
 " Functions & Tools
@@ -675,8 +687,6 @@
             let otl_bold_headers=0
             let otl_use_thlnk=0
             let use_space_colon=1
-        " au BufWinLeave *.otl mkview
-        " au BufWinEnter *.otl silent loadview
     " fugitive and git commands
         " Normal rotation
         nnoremap <leader>g :Git<space>
@@ -830,7 +840,9 @@
         let Tlist_WinWidth = 50
         map <F3> :!/usr/bin/ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR>
     " Tagbar
-        nnoremap <leader>tt :TagbarToggle<CR>
+        nnoremap <leader>t :TagbarToggle<CR>
+        nnoremap <leader>tf :TagbarTogglePause<CR>
+        nnoremap <leader>tt :TagbarOpenAutoClose<CR>
     " Bufferline
         let g:bufferline_active_buffer_left = '('
         let g:bufferline_active_buffer_right = ')'
@@ -868,9 +880,6 @@
         nnoremap <leader>pva :VirtualEnvActivate<space>
         nnoremap <leader>pvd :VirtualEnvDeactivate<CR>
         nnoremap <leader>pvi :Shell virtualenv --python=/usr/bin/python3 $WORKON_HOME/
-    " SearchTasks
-        let g:searchtasks_list=["TODO", "FIXME", "XXX", "HACK", "BUG"]
-        nnoremap <leader>us :SearchTasks . 
     " Popwindow
         let g:popwindow_close_types = [
             \'fugitive-diff', 'help', 'permissive_temp', 'fugitive', 'explorer', 
@@ -885,6 +894,13 @@
     " Sparkup
         let g:sparkupExecuteMapping = '<c-i>'
         " let g:sparkupNextMapping = <c-n>
+    " Vim-Android
+        let g:android_sdk_path='/home/brian/dev/android/android-sdk-linux'
+        let g:gradle_glyph_error=''
+        let g:gradle_glyph_warning=''
+        let g:gradle_glyph_gradle=''
+        let g:gradle_glyph_android=''
+        let g:gradle_glyph_building=''
 
 " ------------------
 " Filetype Specific Options
@@ -898,9 +914,7 @@
             \ setlocal textwidth=80 |
             \ setlocal filetype=markdown |
             \ setlocal foldlevel=1 |
-            \ set foldcolumn=2 |
-            \ nnoremap <leader>mp :Me<CR>|
-            \ nnoremap <leader>mr :Mer<CR>
+            \ set foldcolumn=2
     " Vimrc
         autocmd Filetype vimrc
             \ setlocal nospell
@@ -1009,3 +1023,22 @@
         autocmd FileType,BufRead,BufNewFile,BufEnter racket,scheme,*.rkt,*.rktl,*.ss,*.scm,*.sch 
             \ setlocal tabstop=2 |
             \ setlocal shiftwidth=2
+    " Gradle syntax highlighting
+        autocmd FileType,bufRead,BufNewFile,BufEnter gradle,*.gradle
+            \ setlocal filetype=groovy
+    " Java
+        autocmd FileType,bufRead,BufNewFile,BufEnter java,*.java
+            \ setlocal omnifunc=javacomplete#Complete |
+            \ nmap <leader>jI <Plug>(JavaComplete-Imports-AddMissing) |
+            \ nmap <leader>jR <Plug>(JavaComplete-Imports-RemoveUnused) |
+            \ nmap <leader>ji <Plug>(JavaComplete-Imports-AddSmart) |
+            \ nmap <leader>jii <Plug>(JavaComplete-Imports-Add) |
+            \ nmap <leader>jM <Plug>(JavaComplete-Generate-AbstractMethods) |
+            \ nmap <leader>jA <Plug>(JavaComplete-Generate-Accessors) |
+            \ nmap <leader>js <Plug>(JavaComplete-Generate-AccessorSetter) |
+            \ nmap <leader>jg <Plug>(JavaComplete-Generate-AccessorGetter) |
+            \ nmap <leader>ja <Plug>(JavaComplete-Generate-AccessorSetterGetter) |
+            \ nmap <leader>jts <Plug>(JavaComplete-Generate-ToString) |
+            \ nmap <leader>jeq <Plug>(JavaComplete-Generate-EqualsAndHashCode) |
+            \ nmap <leader>jc <Plug>(JavaComplete-Generate-Constructor) |
+            \ nmap <leader>jcc <Plug>(JavaComplete-Generate-DefaultConstructor)
