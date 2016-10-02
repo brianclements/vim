@@ -12,25 +12,25 @@ endif
 let colors_name = "primal"
 
 " General colors
-hi Normal guifg=#D9D9D9 guibg=black ctermfg=253 ctermbg=0
-hi NonText guifg=#070707 guibg=black ctermfg=232 ctermbg=0
+hi Normal       guifg=#D9D9D9   guibg=black     ctermfg=253     ctermbg=0
+hi NonText      guifg=#070707   guibg=black     ctermfg=232     ctermbg=0
 
-hi Cursor guifg=black guibg=white ctermfg=0 ctermbg=15
-hi LineNr guifg=#3D3D3D guibg=black ctermfg=239 ctermbg=0
+hi Cursor       guifg=black     guibg=white     ctermfg=0       ctermbg=15
+hi LineNr       guifg=#3D3D3D   guibg=black     ctermfg=239     ctermbg=0
 
-hi VertSplit guifg=#202020 guibg=#202020 ctermfg=235 ctermbg=235
-hi StatusLine guifg=#CCCCCC guibg=#202020 gui=italic ctermfg=235 ctermbg=254
-hi StatusLineNC guifg=black guibg=#202020 ctermfg=0 ctermbg=235
+hi VertSplit    guifg=#202020   guibg=#202020   ctermfg=235     ctermbg=235
+hi StatusLine   guifg=#CCCCCC   guibg=#202020   ctermfg=235     ctermbg=254     gui=italic
+hi StatusLineNC guifg=black     guibg=#202020   ctermfg=0       ctermbg=235
 
-hi Title guifg=#f6f3e8 gui=bold ctermfg=187 cterm=bold
-hi WildMenu guifg=black guibg=#cae682 ctermfg=0 ctermbg=195
-hi ModeMsg guifg=black guibg=#C6C5FE gui=bold ctermfg=0 ctermbg=189 cterm=bold
-hi MatchParen guifg=#a70400 guibg=#000000 gui=bold ctermfg=Red ctermbg=black cterm=Bold
+hi Title        guifg=#f6f3e8   ctermfg=187     cterm=bold      gui=italic
+hi WildMenu     guifg=black     guibg=#cae682   ctermfg=0       ctermbg=195
+hi ModeMsg      guifg=black     guibg=#C6C5FE   ctermfg=0       ctermbg=189 cterm=bold   gui=bold 
+hi MatchParen   guifg=#a70400   guibg=#000000   gui=bold        ctermfg=Red ctermbg=black cterm=Bold
 
 " folding highlights
-highlight Folded guifg=#380C02 guibg=#000000 gui=bold,italic ctermfg=52 ctermbg=black cterm=bold 
-highlight Folded guifg=#680400 guibg=#0a0a0a gui=bold,italic ctermfg=52 ctermbg=232 cterm=bold 
-highlight FoldColumn guibg=#262626 ctermbg=234
+hi Folded guifg=#380C02 guibg=#000000 gui=bold,italic ctermfg=52 ctermbg=black cterm=bold 
+hi Folded guifg=#680400 guibg=#0a0a0a gui=bold,italic ctermfg=52 ctermbg=232 cterm=bold 
+hi FoldColumn guibg=#262626 ctermbg=234
 
 " Visual highlighting
 hi Visual guibg=#181c33 ctermfg=254 ctermbg=24
@@ -93,47 +93,100 @@ hi DiffChange guibg=#002e4d ctermbg=17
 hi DiffText guibg=#cccccc guifg=#000000 ctermbg=247 ctermfg=16
 hi DiffDelete guibg=#990000 guifg=#000000 ctermbg=88  ctermfg=black
 
-" Syntax highlighting
+
+
+" ======    Syntax Highlighting     ======
 hi Comment guifg=#333333 ctermfg=8
+
+" Primitives
+hi Constant guifg=#875f5f ctermfg=95
 hi String guifg=#A8FF60 ctermfg=155
 hi Number guifg=#FF73FD ctermfg=207
-
-hi Keyword guifg=#96CBFE ctermfg=117
-hi PreProc guifg=#96CBFE ctermfg=117
-hi Conditional guifg=#6699CC ctermfg=110
-
-hi Todo guifg=#000000 guibg=#cae682 ctermfg=0 ctermbg=195
-hi Constant guifg=#99CC99 ctermfg=151
-
-hi Identifier guifg=#5E73B1 ctermfg=68
-hi Function guifg=#ba997a ctermfg=216
-hi Type guifg=#b3b380 ctermfg=228
-hi Type guifg=#c4c46c ctermfg=228
-hi Statement guifg=#44678A ctermfg=67
-
-hi Special guifg=#E18964 ctermfg=173
-hi Delimiter guifg=#00A0A0 ctermfg=37
-hi Operator guifg=white ctermfg=white
-
-hi link Character Constant
-hi link Boolean Constant
+hi Boolean guifg=#afd7af ctermfg=151
+hi Character guifg=#af5f00 ctermfg=130
 hi link Float Number
+
+" Statements
+hi Statement guifg=#44678A ctermfg=67
+hi Conditional guifg=#6699CC ctermfg=110
 hi link Repeat Statement
-hi link Label Statement
+hi Operator guifg=white ctermfg=white
+hi Keyword guifg=#96CBFE ctermfg=117
 hi link Exception Statement
+hi link Label Statement
+
+" Preprocessing 
+hi PreProc guifg=#96CBFE ctermfg=117
 hi link Include PreProc
 hi link Define PreProc
 hi link Macro PreProc
 hi link PreCondit PreProc
+
+" Type
+hi Type guifg=#c4c46c ctermfg=228
 hi link StorageClass Type
 hi link Structure Type
 hi link Typedef Type
+
+" Functions
+hi Identifier guifg=#5E73B1 ctermfg=68
+hi Function guifg=#ba997a ctermfg=216
+
+" Special
+hi Special guifg=#E18964 ctermfg=173
+hi Todo guifg=#000000 guibg=#cae682 ctermfg=0 ctermbg=195
 hi link Tag Special
 hi link SpecialChar Special
 hi link SpecialComment Special
 hi link Debug Special
+hi Delimiter guifg=#FF8000 ctermfg=brown
+hi proper guifg=#ffffff gui=Bold ctermfg=255 cterm=Bold
+hi global guifg=#af87d7 ctermfg=140
 
-" Special for Ruby
+" ======    Language Exceptions     ======
+" Java
+hi javaDocSeeTag guifg=#dbca90 ctermfg=darkgray
+hi link javaCommentTitle javaDocSeeTag
+hi link javaDocTags javaDocSeeTag
+hi link javaDocParam javaDocSeeTag
+hi link javaDocSeeTagParam javaDocSeeTag
+hi link javaScopeDecl Identifier
+hi link javaFuncDef Function
+hi link javaAnnotation Character
+hi link javaTypedef Type
+hi link javaClassDecl Type
+hi link javaOperator Type
+hi link javaStorageClass PreProc
+hi link javaType Keyword
+hi javaC_Java ctermfg=245
+hi javaE_Java ctermfg=245
+hi javaX_Java ctermfg=245
+hi link javaParenT Function
+hi link javaParenT1 javaParenT
+hi link javaParenT2 javaParenT
+
+" XML
+hi link xmlTag Keyword
+hi link xmlTagName Conditional
+hi link xmlEndTag Identifier
+
+" HTML
+hi link htmlTag Keyword
+hi link htmlTagName Conditional
+hi link htmlEndTag Identifier
+
+" Javascript
+hi link javaScriptNumber Number
+hi link javaScriptNull Constant
+hi link javaScriptOperator Type
+hi link javaScriptIdentifier Identifier
+
+" Python
+hi link pythonBuiltinType Keyword
+hi link pythonBuiltinObj Boolean
+hi link pythonOperator Conditional
+
+" Ruby
 hi rubyRegexp guifg=#B18A3D ctermfg=brown
 hi rubyRegexpDelimiter guifg=#FF8000 ctermfg=brown
 hi rubyEscape guifg=white ctermfg=cyan
@@ -150,28 +203,5 @@ hi link rubyGlobalVariable Identifier
 hi link rubyClassVariable Identifier
 hi link rubyConstant Type
 
-" Special for Java
-hi link javaScopeDecl Identifier
-hi link javaCommentTitle javaDocSeeTag
-hi link javaDocTags javaDocSeeTag
-hi link javaDocParam javaDocSeeTag
-hi link javaDocSeeTagParam javaDocSeeTag
-
-hi javaDocSeeTag guifg=#CCCCCC ctermfg=darkgray
-hi javaDocSeeTag guifg=#CCCCCC ctermfg=darkgray
-
-" Special for XML
-hi link xmlTag Keyword
-hi link xmlTagName Conditional
-hi link xmlEndTag Identifier
-
-" Special for HTML
-hi link htmlTag Keyword
-hi link htmlTagName Conditional
-hi link htmlEndTag Identifier
-
-" Special for Javascript
-hi link javaScriptNumber Number
-
-" Special for CSharp
+" CSharp
 hi link csXmlTag Keyword
