@@ -1,21 +1,17 @@
 " VIM Configuration for Brian Clements
 " URL:      github.com/brianclements/vim
-" Version:  1.5.0
-" Date:     2016.07.30-13:59 
+" Version:  1.5.1
+" Date:     2016.10.02-21:41
 " Changes:  
-" - add jshint2.vim to vundle list, config
-" - remove begin of line keymaps; use default
-" - fix rooter config for non projects
-" - setlocal for dockerfiles
-" - Pull vim-markdown-extra-preview plugin
-" - Pull searchtasks.vim plugin
-" - Change to Nerd Fonts
-" - Fix mkview/loadview
-" - Add vimgrep commands
-" - Tagbar toggle fixes
-" - Add vim-javacomplete2 plugin settings
-" - Add vim-android plugin settings
-" - Add gradle/java settings
+" - remove view saving; only created problems and never really need it
+" - better begin-of-line action
+" - remove backspace+return; never used it and just conflicted with quickfix
+" - unfold results of Shell
+" - scroll to bottom of Shell when results
+" - Sparkup keybinds
+" - markdown/html filetype fixes
+" - java filetype/syntax/make fixes
+" - set global conceallevel
 " ------------------
 
 " ------------------
@@ -121,9 +117,6 @@
             " augroup END
         set foldmethod=indent
         set foldignore=
-        " Saves manual folds
-            au BufWritePost,BufLeave,WinLeave ?* mkview
-            au BufWinEnter ?* silent loadview
     " Omnicompletion
         set omnifunc=syntaxcomplete#Complete
     " Misc Options
@@ -278,8 +271,8 @@
         nnoremap <C-w>O :only
         nnoremap <C-w><C-o> :only
         nnoremap <CR> o<Esc>
-        nnoremap H ^
-        vnoremap H ^
+        nnoremap H 0^
+        vnoremap H 0^
         nnoremap L $
         vnoremap L $
         nnoremap dD 0D
@@ -294,8 +287,6 @@
         inoremap <silent> <leader>j; <ESC>
         nnoremap <silent> <leader>j; <ESC>
         vnoremap <silent> <leader>j; <ESC>
-    " Carriage Return + demote tab (only in gui)
-        inoremap <C-CR> <CR><BS>
     " Cut/paste shortcuts for x-clipboard
         vnoremap <silent> <leader>sy "+y
         vnoremap <silent> <leader>sp "+p
@@ -497,7 +488,7 @@
             let command = join(map(split(a:command), 'expand(v:val)'))
             let winnr = bufwinnr('^' . command . '$')
             silent! execute  winnr < 0 ? 'botright new ' . fnameescape(command) : winnr . 'wincmd w'
-            setlocal buftype=nowrite bufhidden=wipe nobuflisted noswapfile nowrap number
+            setlocal buftype=nowrite bufhidden=wipe nobuflisted noswapfile nowrap number foldlevel=15
             echo 'Execute ' . command . '...'
             if (len(lines))
                 for line in lines
@@ -509,6 +500,7 @@
             endif
             silent! execute 'SmartResizeWindow 20'
             silent! redraw
+            normal! G
             silent! execute 'au BufUnload <buffer> execute bufwinnr(' . bufnr('#') . ') . ''wincmd w'''
             silent! execute 'nnoremap <silent> <buffer> <LocalLeader>srR :call <SID>ExecuteInShell(''' . command . ''')<CR>'
             silent! execute curwin . 'wincmd w'
@@ -892,8 +884,8 @@
         let g:intentLine_faster = 1
         let g:indentLine_noConcealCursor = 1
     " Sparkup
-        let g:sparkupExecuteMapping = '<c-i>'
-        " let g:sparkupNextMapping = <c-n>
+        let g:sparkupExecuteMapping = '<c-[>'
+        let g:sparkupNextMapping = '<c-]>'
     " Vim-Android
         let g:android_sdk_path='/home/brian/dev/android/android-sdk-linux'
         let g:gradle_glyph_error=''
@@ -909,11 +901,11 @@
         autocmd FileType,BufEnter *.*
             \ exec 'Rooter'
     " Markdown (default for all text files)
-        autocmd FileType,BufRead,BufNewFile,BufEnter txt,*.text,*.md,*.markdown,*.mkd
+        autocmd FileType,BufRead,BufNewFile,BufEnter txt,markdown,*.text,*.md,*.markdown,*.mkd
             \ setlocal spell |
             \ setlocal textwidth=80 |
-            \ setlocal filetype=markdown |
             \ setlocal foldlevel=1 |
+            \ let g:vim_markdown_conceal = 0 |
             \ set foldcolumn=2
     " Vimrc
         autocmd Filetype vimrc
@@ -1027,8 +1019,11 @@
         autocmd FileType,bufRead,BufNewFile,BufEnter gradle,*.gradle
             \ setlocal filetype=groovy
     " Java
-        autocmd FileType,bufRead,BufNewFile,BufEnter java,*.java
+        autocmd FileType,BufRead,BufNewFile,BufEnter java,*.java
             \ setlocal omnifunc=javacomplete#Complete |
+            \ syn match proper "[^a-zA-Z0-9-<>(_"\@][.A-Z][a-zA-Z0-9_]*"hs=s+1 |
+            \ syn match proper "([A-Z][a-zA-Z0-9]*)"hs=s+1,he=e-1 |
+            \ syn match proper "([A-Z][a-zA-Z0-9]*\.[A-Z0-9]*)"hs=s+1,he=e-1 |
             \ nmap <leader>jI <Plug>(JavaComplete-Imports-AddMissing) |
             \ nmap <leader>jR <Plug>(JavaComplete-Imports-RemoveUnused) |
             \ nmap <leader>ji <Plug>(JavaComplete-Imports-AddSmart) |
@@ -1041,4 +1036,12 @@
             \ nmap <leader>jts <Plug>(JavaComplete-Generate-ToString) |
             \ nmap <leader>jeq <Plug>(JavaComplete-Generate-EqualsAndHashCode) |
             \ nmap <leader>jc <Plug>(JavaComplete-Generate-Constructor) |
-            \ nmap <leader>jcc <Plug>(JavaComplete-Generate-DefaultConstructor)
+            \ nmap <leader>jcc <Plug>(JavaComplete-Generate-DefaultConstructor) |
+            \ let &errorformat = 
+                \ '%E%\m:%\%%(compileJava%\|compileTarget%\)%f:%l: error: %m,' . 
+                \ '%E%f:%l: error: %m,' .
+                \ '%Z%p^,' .
+                \ '%-G%.%#' |
+            \ map <buffer> <F5> :set makeprg=$adev_gradle_bin\ build<CR>:make<bar>:cwindow<bar>:!./adev --available-device app install -rs<CR>
+    autocmd FileType,BufRead,BufNewFile,BufEnter *
+        \ set conceallevel=0 |
