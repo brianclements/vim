@@ -139,7 +139,7 @@ hi link Tag Special
 hi link SpecialChar Special
 hi link SpecialComment Special
 hi link Debug Special
-hi Delimiter guifg=#FF8000 ctermfg=brown
+hi Delimiter guifg=#AF5F00 ctermfg=brown
 hi proper guifg=#ffffff gui=Bold ctermfg=255 cterm=Bold
 hi global guifg=#af87d7 ctermfg=140
 
