@@ -1,17 +1,9 @@
 " VIM Configuration for Brian Clements
 " URL:      github.com/brianclements/vim
-" Version:  1.5.1
-" Date:     2016.10.02-21:41
+" Version:  1.5.2
+" Date:     2016.11.23-23:11 
 " Changes:  
-" - remove view saving; only created problems and never really need it
-" - better begin-of-line action
-" - remove backspace+return; never used it and just conflicted with quickfix
-" - unfold results of Shell
-" - scroll to bottom of Shell when results
-" - Sparkup keybinds
-" - markdown/html filetype fixes
-" - java filetype/syntax/make fixes
-" - set global conceallevel
+" - 2 space tabstop in markdown
 " ------------------
 
 " ------------------
@@ -905,6 +897,8 @@
             \ setlocal spell |
             \ setlocal textwidth=80 |
             \ setlocal foldlevel=1 |
+            \ setlocal tabstop=2 |
+            \ setlocal shiftwidth=2 |
             \ let g:vim_markdown_conceal = 0 |
             \ set foldcolumn=2
     " Vimrc
